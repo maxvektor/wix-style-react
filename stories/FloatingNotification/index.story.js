@@ -2,7 +2,11 @@ import React from 'react';
 import { storySettings } from './storySettings';
 import LiveCodeExample from '../utils/Components/LiveCodeExample';
 
-import FloatingNotification, { NOTIFICATION_TYPES } from '../../src/FloatingNotification';
+import StatusComplete from '../../new-icons/StatusComplete';
+
+import FloatingNotification, {
+  NOTIFICATION_TYPES,
+} from '../../src/FloatingNotification';
 
 export default {
   category: storySettings.kind,
@@ -15,13 +19,16 @@ export default {
     dataHook: storySettings.dataHook,
     type: NOTIFICATION_TYPES.STANDARD,
     text: 'some content text',
-    onClose: () => {}
+    onClose: () => {},
+    textButtonText: 'Trash',
+    buttonText: 'Undo',
+    icon: <StatusComplete size={24} />,
   },
 
   exampleProps: {
     // Put here presets of props, for more info:
     // https://github.com/wix/wix-ui/blob/master/packages/wix-storybook-utils/docs/usage.md#using-list
-    type: Object.values(NOTIFICATION_TYPES)
+    type: Object.values(NOTIFICATION_TYPES),
   },
 
   examples: (

@@ -1,9 +1,9 @@
 import { Category } from '../storiesHierarchy';
 
 export const storySettings = {
-  kind: Category.COMPONENTS,
+  kind: '8. Notification Bars',
   category: Category.COMPONENTS,
 
-  storyName: 'FloatingNotification',
+  storyName: '8.2 Floating Notification',
   dataHook: 'story-floating-notification',
 };

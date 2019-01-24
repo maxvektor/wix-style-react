@@ -13,6 +13,10 @@
   max-width: 540px;
   min-width: 395px;
 
+  > * {
+    margin-right: 6pt;
+  }
+
   .gap {
     min-width: 24pt;
   }
@@ -23,6 +27,19 @@
     align-items: center;
     margin-left: auto;
     cursor: pointer;
+  }
+
+  .icon {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .textButton {
+  }
+
+  .button {
+    margin-left: 6pt;
   }
 
   &.standard {
@@ -57,8 +74,18 @@
     padding-left: 6pt;
 
     .close {
-      margin-left: initial;
+      margin-left: unset;
       margin-right: auto;
+    }
+
+    > * {
+      margin-right: unset;
+      margin-left: 6pt;
+    }
+
+    .button {
+      margin-left: unset;
+      margin-right: 6pt;
     }
   }
 }

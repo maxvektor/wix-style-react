@@ -73,6 +73,7 @@ import './PopoverMenu/index.story'; // 7.3 Popover Menu
 // 8. Notification Bars
 // 8.1 Standard, 8.2 Error, 8.3 Success, 8.4 Warning, 8.5 Premium
 import './Notification/index.story.js';
+import './FloatingNotification/index.story';
 import './FloatingHelper/FloatingHelper.story.js'; // 8.6 FloatingHelper
 import './FloatingHelperContent/FloatingHelperContent.story.js'; // 8.6 + FloatingHelper.Content
 import './SectionHelper/SectionHelper.story.js'; // 8.7 SectionHelper
