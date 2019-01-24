@@ -50,3 +50,15 @@
     border-color: $P20;
   }
 }
+
+:global(.rtl) {
+  .root {
+    padding-right: 12pt;
+    padding-left: 6pt;
+
+    .close {
+      margin-left: initial;
+      margin-right: auto;
+    }
+  }
+}
