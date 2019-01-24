@@ -1,0 +1,52 @@
+@import "../colors";
+
+.root {
+  text-align: center;
+  border-radius: 4px;
+  border-width: 1px;
+  border-style: solid;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding-left: 12pt;
+  padding-right: 6pt;
+  max-width: 540px;
+  min-width: 395px;
+
+  .gap {
+    min-width: 24pt;
+  }
+
+  .close {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  &.standard {
+    background-color: $B50;
+    border-color: $B20;
+  }
+
+  &.success {
+    background-color: $G50;
+    border-color: $G20;
+  }
+
+  &.destructive {
+    background-color: $R40;
+    border-color: $R20;
+  }
+
+  &.warning {
+    background-color: #fff9e1;
+    border-color: $Y05;
+  }
+
+  &.premium {
+    background-color: $P50;
+    border-color: $P20;
+  }
+}

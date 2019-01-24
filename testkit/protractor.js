@@ -408,3 +408,9 @@ import { richTextInputAreaDriverFactory } from '../src/RichTextInputArea/RichTex
 export const richTextInputAreaTestkitFactory = protractorUniTestkitFactoryCreator(
   richTextInputAreaDriverFactory,
 );
+
+import { floatingNotificationDriverFactory } from '../src/FloatingNotification/FloatingNotification.driver';
+
+export const floatingNotificationTestkitFactory = protractorUniTestkitFactoryCreator(
+  floatingNotificationDriverFactory,
+);
