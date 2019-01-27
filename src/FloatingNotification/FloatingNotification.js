@@ -28,10 +28,10 @@ class FloatingNotification extends React.PureComponent {
     onClose: PropTypes.func,
 
     /** Text for text button to appear after content */
-    textButtonText: PropTypes.string,
+    linkButtonText: PropTypes.string,
 
     /** On click handler for text button */
-    onTextButtonClick: PropTypes.func,
+    onLinkButtonClick: PropTypes.func,
 
     /** Text for button to appear after content/textButton */
     buttonText: PropTypes.string,
@@ -114,16 +114,16 @@ class FloatingNotification extends React.PureComponent {
   }
 
   _getTextButton() {
-    const { textButtonText, onTextButtonClick } = this.props;
-    return textButtonText ? (
+    const { linkButtonText, onLinkButtonClick } = this.props;
+    return linkButtonText ? (
       <TextButton
         underline={'always'}
         skin={'dark'}
         size={'small'}
         className={styles.textButton}
-        onClick={onTextButtonClick}
+        onClick={onLinkButtonClick}
       >
-        {textButtonText}
+        {linkButtonText}
       </TextButton>
     ) : null;
   }

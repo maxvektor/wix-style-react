@@ -20,9 +20,9 @@ export default {
     type: NOTIFICATION_TYPES.STANDARD,
     text: 'some content text',
     onClose: () => {},
-    textButtonText: 'Trash',
+    linkButtonText: 'Trash',
     buttonText: 'Undo',
-    prefixIcon: <StatusComplete />
+    prefixIcon: <StatusComplete />,
   },
 
   exampleProps: {
