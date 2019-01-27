@@ -159,7 +159,9 @@ class FloatingNotification extends React.PureComponent {
     if (floatable && el) {
       const parentPosition = el.parentNode.style.position;
       el.parentNode.style.position =
-        parentPosition === 'absolute' ? 'absolute' : 'relative';
+        ['relative', 'absolute'].indexOf(parentPosition) > -1
+          ? parentPosition
+          : 'relative';
     }
   };
 }
