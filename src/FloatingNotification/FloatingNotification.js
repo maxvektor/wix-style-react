@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import styles from './FloatingNotification.scss';
-
 import Text from '../Text';
 import TextButton from '../TextButton';
 import Button from '../Button';
 import X from '../new-icons/X';
+import styles from './FloatingNotification.scss';
 
 export const NOTIFICATION_TYPES = {
   STANDARD: 'standard',
@@ -41,10 +40,16 @@ class FloatingNotification extends React.PureComponent {
     onButtonClick: PropTypes.func,
 
     /** An icon element to appear before content */
-    icon: PropTypes.node,
+    prefixIcon: PropTypes.element,
 
     /** The text content of the notification */
     text: PropTypes.string,
+
+    /** Is the element a floating element or inline */
+    floatable: PropTypes.bool,
+
+    /** If floatable shows and hides the element */
+    show: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -59,7 +64,7 @@ class FloatingNotification extends React.PureComponent {
     const button = this._getButton();
     const close = this._getClose();
 
-    return (
+    const elementContent = (
       <div
         className={classNames(styles.root, styles[type])}
         data-hook={dataHook}
@@ -72,11 +77,50 @@ class FloatingNotification extends React.PureComponent {
         {close}
       </div>
     );
+
+    return this._wrapFloaterIfNeeded(elementContent);
+  }
+
+  _wrapFloaterIfNeeded(content) {
+    const { floatable, show } = this.props;
+
+    if (floatable) {
+      content = (
+        <div
+          ref={this._wrapperRef}
+          className={styles.wrapper}
+          style={this._getWrapperPosition()}
+        >
+          <div className={classNames(styles.positioner, {[styles.show]: show})}>{content}</div>
+        </div>
+      );
+    }
+
+    return content;
+  }
+
+  _getWrapperPosition() {
+    let position;
+
+    if (this._wrapperElement) {
+      const parentNode = this._wrapperElement.parentNode;
+
+      if (parentNode) {
+        position = {
+          top: parentNode.offsetTop,
+          left: parentNode.offsetLeft,
+          width: parentNode.offsetWidth,
+          height: parentNode.offsetHeight,
+        };
+      }
+    }
+
+    return position;
   }
 
   _getIcon() {
-    const { icon } = this.props;
-    return icon ? <div className={styles.icon}>{icon}</div> : null;
+    const { prefixIcon } = this.props;
+    return prefixIcon ? <div className={styles.icon}>{prefixIcon}</div> : null;
   }
 
   _getContent() {
@@ -127,6 +171,11 @@ class FloatingNotification extends React.PureComponent {
       </div>
     ) : null;
   }
+
+  _wrapperRef = el => {
+    this._wrapperElement = el;
+    this.forceUpdate();
+  };
 }
 
 export default FloatingNotification;
