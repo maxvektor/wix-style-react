@@ -1,13 +1,14 @@
 import React from 'react';
 import LiveCodeExample from '../../utils/Components/LiveCodeExample';
 import { Layout, Cell } from '../../../src/Layout';
-import FloatingNotification from '../../../src/FloatingNotification';
+import FloatingNotification, { NOTIFICATION_TYPES } from '../../../src/FloatingNotification';
 import MessageBoxFunctionalLayout from '../../../src/MessageBox/MessageBoxFunctionalLayout';
 import Text from '../../../src/Text/Text';
 
 import ExampleSimple from '!raw-loader!./ExampleSimple';
 import ExampleWithEverything from '!raw-loader!./ExampleWithEverything';
 import ExampleFloating from '!raw-loader!./ExampleFloating';
+import ExampleFloatingLongText from '!raw-loader!./ExampleFloatingLongText';
 
 export default class FloatingNotificationExample extends React.Component {
   state = {
@@ -15,17 +16,22 @@ export default class FloatingNotificationExample extends React.Component {
       { example: ExampleSimple, title: 'Only text' },
       { example: ExampleWithEverything, title: 'All options, inline' },
       { example: ExampleFloating, title: 'Floating example' },
+      {
+        example: ExampleFloatingLongText,
+        title: 'Floating example with long text',
+      },
     ],
     showFloater: false,
   };
 
   render() {
+    const { showFloater } = this.state;
     const { examples } = this.state;
 
     return (
       <Layout>
         {examples.map(({ example, title }) => (
-          <Cell span={12}>
+          <Cell span={12} key={title}>
             <LiveCodeExample compact title={title} initialCode={example} />
           </Cell>
         ))}
@@ -37,16 +43,15 @@ export default class FloatingNotificationExample extends React.Component {
             theme="blue"
             dataHook="alert-standard"
             onOk={() => this.setState({ showFloater: true })}
-            disableConfirmation={this.state.showFloater}
+            disableConfirmation={showFloater}
           >
-            This is a generic message. No harm done, but really needed to
-            interrupt you.
+            Click the action to view a floating notification
             <FloatingNotification
-              type="destructive"
-              text="Cannot continue!"
+              type={NOTIFICATION_TYPES.SUCCESS}
+              text="Click the X to close"
               onClose={() => this.setState({ showFloater: false })}
               floatable
-              show={this.state.showFloater}
+              show={showFloater}
             />
           </MessageBoxFunctionalLayout>
         </Cell>

@@ -57,6 +57,26 @@ class FloatingNotification extends React.PureComponent {
   };
 
   render() {
+    const { floatable, show } = this.props;
+    const notificationBox = this._getNotificationBox();
+
+    return (
+      <div
+        ref={this._wrapperRef}
+        className={classNames(styles.wrapper, { [styles.float]: floatable })}
+      >
+        <div
+          className={classNames(styles.positioner, {
+            [styles.show]: show,
+          })}
+        >
+          {notificationBox}
+        </div>
+      </div>
+    );
+  }
+
+  _getNotificationBox() {
     const { dataHook, type } = this.props;
     const icon = this._getIcon();
     const content = this._getContent();
@@ -64,7 +84,7 @@ class FloatingNotification extends React.PureComponent {
     const button = this._getButton();
     const close = this._getClose();
 
-    const elementContent = (
+    return (
       <div
         className={classNames(styles.root, styles[type])}
         data-hook={dataHook}
@@ -77,45 +97,6 @@ class FloatingNotification extends React.PureComponent {
         {close}
       </div>
     );
-
-    return this._wrapFloaterIfNeeded(elementContent);
-  }
-
-  _wrapFloaterIfNeeded(content) {
-    const { floatable, show } = this.props;
-
-    if (floatable) {
-      content = (
-        <div
-          ref={this._wrapperRef}
-          className={styles.wrapper}
-          style={this._getWrapperPosition()}
-        >
-          <div className={classNames(styles.positioner, {[styles.show]: show})}>{content}</div>
-        </div>
-      );
-    }
-
-    return content;
-  }
-
-  _getWrapperPosition() {
-    let position;
-
-    if (this._wrapperElement) {
-      const parentNode = this._wrapperElement.parentNode;
-
-      if (parentNode) {
-        position = {
-          top: parentNode.offsetTop,
-          left: parentNode.offsetLeft,
-          width: parentNode.offsetWidth,
-          height: parentNode.offsetHeight,
-        };
-      }
-    }
-
-    return position;
   }
 
   _getIcon() {
@@ -173,8 +154,13 @@ class FloatingNotification extends React.PureComponent {
   }
 
   _wrapperRef = el => {
-    this._wrapperElement = el;
-    this.forceUpdate();
+    const { floatable } = this.props;
+
+    if (floatable && el) {
+      const parentPosition = el.parentNode.style.position;
+      el.parentNode.style.position =
+        parentPosition === 'absolute' ? 'absolute' : 'relative';
+    }
   };
 }
 
