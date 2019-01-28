@@ -47,6 +47,7 @@ export default class FloatingNotificationExample extends React.Component {
           >
             Click the action to view a floating notification
             <FloatingNotification
+              key={Math.random()}
               type={NOTIFICATION_TYPES.SUCCESS}
               text="Click the X to close"
               onClose={() => this.setState({ showFloater: false })}

@@ -75,26 +75,25 @@
 
 .wrapper {
   box-sizing: border-box;
+  pointer-events: none;
 
   &.float {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0 30px;
 
     .positioner {
-      position: relative;
-      top: 0;
       opacity: 0;
       margin-top: 0;
       transition: all .2s ease;
+    }
 
-      &.show {
+    &.show {
+      pointer-events: unset;
+
+      .positioner {
         margin-top: 24px;
         opacity: 1;
       }

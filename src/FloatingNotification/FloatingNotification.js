@@ -56,22 +56,29 @@ class FloatingNotification extends React.PureComponent {
     type: NOTIFICATION_TYPES.STANDARD,
   };
 
+  state = {
+    position: undefined,
+  };
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._animationFrameId);
+  }
+
   render() {
+    const { position } = this.state;
     const { floatable, show } = this.props;
     const notificationBox = this._getNotificationBox();
 
     return (
       <div
         ref={this._wrapperRef}
-        className={classNames(styles.wrapper, { [styles.float]: floatable })}
+        className={classNames(styles.wrapper, {
+          [styles.float]: floatable,
+          [styles.show]: show,
+        })}
+        style={position}
       >
-        <div
-          className={classNames(styles.positioner, {
-            [styles.show]: show,
-          })}
-        >
-          {notificationBox}
-        </div>
+        <div className={styles.positioner}>{notificationBox}</div>
       </div>
     );
   }
@@ -154,16 +161,33 @@ class FloatingNotification extends React.PureComponent {
   }
 
   _wrapperRef = el => {
+    this._animationFrameId = requestAnimationFrame(() =>
+      this._positionWrapperFromParent(el),
+    );
+  };
+
+  _positionWrapperFromParent(el) {
+    const { position } = this.state;
     const { floatable } = this.props;
 
-    if (floatable && el) {
-      const parentPosition = el.parentNode.style.position;
-      el.parentNode.style.position =
-        ['relative', 'absolute'].indexOf(parentPosition) > -1
-          ? parentPosition
-          : 'relative';
+    if (!position && floatable && el) {
+      const parent = el.parentNode;
+      const newPosition = {
+        width: parent.offsetWidth,
+        height: parent.offsetHeight,
+      };
+
+      if (el.offsetParent === parent) {
+        newPosition.top = 0;
+        newPosition.left = 0;
+      } else {
+        newPosition.top = parent.offsetTop;
+        newPosition.left = parent.offsetLeft;
+      }
+
+      this.setState({ position: newPosition });
     }
-  };
+  }
 }
 
 export default FloatingNotification;
