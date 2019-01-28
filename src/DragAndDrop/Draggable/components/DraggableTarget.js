@@ -60,7 +60,10 @@ const target = {
         it required for case, when we moving item from 1 container to another
       )
     */
-    props.onHover(dragIndex, hoverIndex, {
+    props.onHover({
+      ...monitorItem,
+      removedIndex: dragIndex,
+      addedIndex: hoverIndex,
       id: monitorItem.id,
       item: monitorItem.originalItem,
     });

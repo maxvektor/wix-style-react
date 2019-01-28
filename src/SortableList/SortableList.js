@@ -6,12 +6,16 @@ import { Draggable } from '../DragAndDrop/Draggable';
 import Container from '../DragAndDrop/Draggable/components/Container';
 import DragDropContextProvider from '../DragDropContextProvider';
 
+import times from '../utils/operators/times';
+
 /**
  * Attaches Drag and Drop behavior to a list of items
  */
 export default class SortableList extends WixComponent {
   state = {
     items: this.props.items || [],
+    animationShifts: {},
+    isDragging: null,
   };
 
   componentWillReceiveProps({ items }) {
@@ -21,19 +25,38 @@ export default class SortableList extends WixComponent {
   }
 
   handleMoveOut = id => {
-    this.setState({ items: this.state.items.filter(it => it.id !== id) });
+    this.setState({ items: this.state.items.filter(it => it.id !== id), animationShifts: {} });
   };
 
-  handleHover = (removedIndex, addedIndex, options = {}) => {
+  handleHover = ({removedIndex, addedIndex, originalIndex, id, item}) => {
     this.setState(prevState => {
       const nextItems = [...prevState.items];
-      if (!nextItems.find(it => it.id === options.id)) {
-        nextItems.splice(addedIndex, 0, options.item);
-      } else {
-        nextItems.splice(addedIndex, 0, ...nextItems.splice(removedIndex, 1));
+      let animationShifts = {};
+      let isDragging = this.state.isDragging;
+
+      // New item added from other list
+      if (!nextItems.find(it => it.id === id)) {
+        nextItems.splice(addedIndex, 0, item);
+        isDragging = true;
+      }
+      // Existing item moved
+      else {
+        const minIndex = Math.min(originalIndex, addedIndex);
+        const maxIndex = Math.max(originalIndex, addedIndex);
+
+        // TODO change this to coordinates
+        const shiftDirection = originalIndex <= addedIndex ? -1 : 1;
+
+        times(maxIndex - minIndex + 1, (i) => {
+          const index = i + minIndex;
+          if (index !== originalIndex) {
+            // TODO change this to use actual node size and position
+            animationShifts[index] = [0, shiftDirection * 72];
+          }
+        });
       }
 
-      return { items: nextItems };
+      return { items: nextItems, animationShifts, isDragging };
     });
   };
 
@@ -54,12 +77,14 @@ export default class SortableList extends WixComponent {
   };
 
   handleDragStart = data => {
+    this.setState({animationShifts: {}, isDragging: data.id});
     if (this.props.onDragStart) {
       this.props.onDragStart(data);
     }
   };
 
   handleDragEnd = data => {
+    this.setState({animationShifts: {}, isDragging: null});
     if (this.props.onDragEnd) {
       this.props.onDragEnd(data);
     }
@@ -108,8 +133,11 @@ export default class SortableList extends WixComponent {
           <div className={contentClassName}>
             {this.state.items.map((item, index) => (
               <Draggable
-                {...common}
                 key={`${item.id}-${this.props.containerId}`}
+                shift={this.state.animationShifts[index]}
+                isDragging={this.state.isDragging && this.state.isDragging !== item.id} // TODO rename prop
+
+                {...common}
                 id={item.id}
                 index={index}
                 item={item}

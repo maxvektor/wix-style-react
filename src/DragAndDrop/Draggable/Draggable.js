@@ -7,9 +7,10 @@ import DraggableTarget from './components/DraggableTarget';
 
 export class Draggable extends WixComponent {
   render() {
+    const { isDragging, ...restProps } = this.props;
     return (
-      <DraggableTarget {...this.props}>
-        <DraggableSource {...this.props} />
+      <DraggableTarget {...restProps}>
+        <DraggableSource {...restProps} ignoreMouseEvents={isDragging} />
       </DraggableTarget>
     );
   }
@@ -40,6 +41,9 @@ Draggable.propTypes = {
   onDragStart: PropTypes.func,
   /** callback for drag end */
   onDragEnd: PropTypes.func,
+
+  shift: PropTypes.arrayOf(PropTypes.number),
+  isDragging: PropTypes.bool,
 };
 
 export default Draggable;

@@ -142,6 +142,7 @@ export default class DraggableSource extends React.Component {
       id,
       item,
     } = this.props;
+
     if (withHandle) {
       return renderItem({
         id,
@@ -156,13 +157,33 @@ export default class DraggableSource extends React.Component {
       });
     }
 
-    return connectDragSource(
-      renderItem({
-        id,
-        item,
-        isPlaceholder: isDragging,
-        connectHandle: noop,
-      }),
+    // TODO move to styles
+    const transition = this.props.ignoreMouseEvents
+      ? 'all .5s'
+      : undefined;
+    const transform = this.props.shift
+      ? `translate(${this.props.shift.join('px,')}px)`
+      : '';
+    const pointerEvents = this.props.ignoreMouseEvents
+      ? 'none'
+      : undefined;
+
+
+    return (
+      <div
+        style={{
+          transition,
+          transform,
+          pointerEvents,
+        }}
+      >
+        {connectDragSource(renderItem({
+          id,
+          item,
+          isPlaceholder: isDragging,
+          connectHandle: noop,
+        }))}
+      </div>
     );
   }
 
@@ -218,4 +239,7 @@ DraggableSource.propTypes = {
   onMoveOut: PropTypes.func,
   onDragStart: PropTypes.func,
   onDragEnd: PropTypes.func,
+
+  shift: PropTypes.arrayOf(PropTypes.number),
+  ignoreMouseEvents: PropTypes.bool,
 };
