@@ -17,7 +17,7 @@ export default class IntroductionExample extends React.Component {
         },
         {
           id: 'b',
-          text: 'Item 2',
+          text: 'Item 2Item 2',
         },
         {
           id: 'c',
@@ -25,11 +25,11 @@ export default class IntroductionExample extends React.Component {
         },
         {
           id: 'd',
-          text: 'Item 4',
+          text: 'Item 4Item 4Item 4Item 4Item 4Item 4Item 4Item 44Item 4Item 4Item 4Item 44Item 4Item 4Item 4Item 4',
         },
         {
           id: 'e',
-          text: 'Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5Item 5',
+          text: 'Item 5Item 5Item 5Item 5',
         },
         {
           id: 'f',

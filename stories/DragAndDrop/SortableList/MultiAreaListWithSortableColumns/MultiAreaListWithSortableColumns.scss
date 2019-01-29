@@ -44,7 +44,9 @@
 }
 
 .column {
+  box-sizing: border-box;
   min-height: 800px;
+  width: 100%;
   background: #f4fafe;
   border: 1px dashed #7a92a5;
   min-width: 210px;

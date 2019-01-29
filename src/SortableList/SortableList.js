@@ -47,25 +47,58 @@ export default class SortableList extends WixComponent {
         nextItems.splice(addedIndex, 0, item);
         isDragging = true;
       }
+
       // Existing item moved
       else {
         const minIndex = Math.min(originalIndex, addedIndex);
         const maxIndex = Math.max(originalIndex, addedIndex);
-        const shiftDirection = originalIndex <= addedIndex ? 1 : -1;
+        const shiftIndex = (addedIndex - originalIndex) / Math.abs(addedIndex - originalIndex);
 
-        // Neighbouring items shift
-        times(maxIndex - minIndex + 1, (i) => {
-          const index = i + minIndex;
-          const {node} = this.draggableNodes[index] || {};
-          const {node: prevNode} = this.draggableNodes[index - shiftDirection] || {};
+        if (shiftIndex > 0) {
+          const previousNodeIndex = originalIndex + 1;
+          const {node} = this.draggableNodes[originalIndex] || {};
+          const {node: prevNode} = this.draggableNodes[previousNodeIndex] || {};
 
-          if (index !== originalIndex && node && prevNode) {
+          if (node && prevNode) {
             const nodeRect = node.getBoundingClientRect();
             const prevNodeRect = prevNode.getBoundingClientRect();
 
-            animationShifts[index] = [prevNodeRect.x - nodeRect.x, prevNodeRect.y - nodeRect.y];
+            animationShifts[previousNodeIndex] = [
+              (nodeRect.y === prevNodeRect.y ? (nodeRect.left - prevNodeRect.left) : 0),
+              (nodeRect.x === prevNodeRect.x ? (nodeRect.top - prevNodeRect.top) : 0),
+            ];
+
+            times(maxIndex - minIndex + 1, (i) => {
+              const index = i + minIndex;
+              if (index !== originalIndex && index !== previousNodeIndex) {
+                animationShifts[index] = animationShifts[previousNodeIndex];
+              }
+            });
           }
-        });
+
+        } else if (shiftIndex < 0) {
+          const previousNodeIndex = originalIndex - 1;
+          const {node} = this.draggableNodes[originalIndex] || {};
+          const {node: prevNode} = this.draggableNodes[previousNodeIndex] || {};
+
+          if (node && prevNode) {
+            const nodeRect = node.getBoundingClientRect();
+            const prevNodeRect = prevNode.getBoundingClientRect();
+
+            animationShifts[previousNodeIndex] = [
+              (nodeRect.y === prevNodeRect.y ? (nodeRect.right - prevNodeRect.right): 0),
+              (nodeRect.x === prevNodeRect.x ? (nodeRect.bottom - prevNodeRect.bottom) : 0),
+            ];
+
+            times(maxIndex - minIndex + 1, (i) => {
+              const index = i + minIndex;
+              if (index !== originalIndex && index !== previousNodeIndex) {
+                animationShifts[index] = animationShifts[previousNodeIndex];
+              }
+            });
+          }
+        }
+
 
         // Calculating placeholder shift
         const {node: targetNode} = this.draggableNodes[addedIndex] || {};
@@ -74,7 +107,10 @@ export default class SortableList extends WixComponent {
         if (targetNode && placeholderNode) {
           const placeholderNodeRect = placeholderNode.getBoundingClientRect();
           const targetNodeRect = targetNode.getBoundingClientRect();
-          animationShifts[originalIndex] = [targetNodeRect.x - placeholderNodeRect.x, targetNodeRect.y - placeholderNodeRect.y];
+          animationShifts[originalIndex] = [
+            (placeholderNodeRect.y === targetNodeRect.y ? (shiftIndex > 0 ? (targetNodeRect.right - placeholderNodeRect.right) : (targetNodeRect.left - placeholderNodeRect.left)): 0),
+            (placeholderNodeRect.x === targetNodeRect.x ? (shiftIndex > 0 ? (targetNodeRect.bottom - placeholderNodeRect.bottom) : (targetNodeRect.top - placeholderNodeRect.top)) : 0),
+          ];
         }
       }
 
