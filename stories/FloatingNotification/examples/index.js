@@ -1,9 +1,6 @@
 import React from 'react';
 import LiveCodeExample from '../../utils/Components/LiveCodeExample';
 import { Layout, Cell } from '../../../src/Layout';
-import FloatingNotification, { NOTIFICATION_TYPES } from '../../../src/FloatingNotification';
-import MessageBoxFunctionalLayout from '../../../src/MessageBox/MessageBoxFunctionalLayout';
-import Text from '../../../src/Text/Text';
 
 import ExampleSimple from '!raw-loader!./ExampleSimple';
 import ExampleWithLongText from '!raw-loader!./ExampleWithLongText';
