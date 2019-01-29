@@ -6,26 +6,19 @@ import MessageBoxFunctionalLayout from '../../../src/MessageBox/MessageBoxFuncti
 import Text from '../../../src/Text/Text';
 
 import ExampleSimple from '!raw-loader!./ExampleSimple';
+import ExampleWithLongText from '!raw-loader!./ExampleWithLongText';
 import ExampleWithEverything from '!raw-loader!./ExampleWithEverything';
-import ExampleFloating from '!raw-loader!./ExampleFloating';
-import ExampleFloatingLongText from '!raw-loader!./ExampleFloatingLongText';
 
 export default class FloatingNotificationExample extends React.Component {
   state = {
     examples: [
       { example: ExampleSimple, title: 'Only text' },
-      { example: ExampleWithEverything, title: 'All options, inline' },
-      { example: ExampleFloating, title: 'Floating example' },
-      {
-        example: ExampleFloatingLongText,
-        title: 'Floating example with long text',
-      },
+      { example: ExampleWithEverything, title: 'All options' },
+      { example: ExampleWithLongText, title: 'Long text' },
     ],
-    showFloater: false,
   };
 
   render() {
-    const { showFloater } = this.state;
     const { examples } = this.state;
 
     return (
@@ -35,27 +28,6 @@ export default class FloatingNotificationExample extends React.Component {
             <LiveCodeExample compact title={title} initialCode={example} />
           </Cell>
         ))}
-        <Cell span={12}>
-          <Text weight={'bold'}>Toggle show and hide</Text>
-          <MessageBoxFunctionalLayout
-            title="Interruption Message"
-            confirmText="Action"
-            theme="blue"
-            dataHook="alert-standard"
-            onOk={() => this.setState({ showFloater: true })}
-            disableConfirmation={showFloater}
-          >
-            Click the action to view a floating notification
-            <FloatingNotification
-              key={Math.random()}
-              type={NOTIFICATION_TYPES.SUCCESS}
-              text="Click the X to close"
-              onClose={() => this.setState({ showFloater: false })}
-              floatable
-              show={showFloater}
-            />
-          </MessageBoxFunctionalLayout>
-        </Cell>
       </Layout>
     );
   }

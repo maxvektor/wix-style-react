@@ -19,37 +19,37 @@ class FloatingNotification extends React.PureComponent {
   static displayName = 'FloatingNotification';
 
   static propTypes = {
+    /** data-hook argument to root element */
     dataHook: PropTypes.string,
+
+    className: PropTypes.string,
 
     /** the type of notification */
     type: PropTypes.oneOf(Object.values(NOTIFICATION_TYPES)),
 
-    /** close button click handler - if exists shows X button */
+    /** decides if to show the close button */
+    showCloseButton: PropTypes.bool,
+
+    /** close button on click handler */
     onClose: PropTypes.func,
 
-    /** Text for text button to appear after content */
-    linkButtonText: PropTypes.string,
+    /** boolean to enable/disable text button to appear after content */
+    showTextButton: PropTypes.bool,
 
-    /** On click handler for text button */
-    onLinkButtonClick: PropTypes.func,
+    /** props to pass to textButton */
+    textButtonProps: PropTypes.object,
 
-    /** Text for button to appear after content/textButton */
-    buttonText: PropTypes.string,
+    /** boolean to enable/disable button to appear after content */
+    showButton: PropTypes.bool,
 
-    /** On click handler for button */
-    onButtonClick: PropTypes.func,
+    /** props to pass to button */
+    buttonProps: PropTypes.object,
 
     /** An icon element to appear before content */
     prefixIcon: PropTypes.element,
 
     /** The text content of the notification */
     text: PropTypes.string,
-
-    /** Is the element a floating element or inline */
-    floatable: PropTypes.bool,
-
-    /** If floatable shows and hides the element */
-    show: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -65,26 +65,7 @@ class FloatingNotification extends React.PureComponent {
   }
 
   render() {
-    const { position } = this.state;
-    const { floatable, show } = this.props;
-    const notificationBox = this._getNotificationBox();
-
-    return (
-      <div
-        ref={this._wrapperRef}
-        className={classNames(styles.wrapper, {
-          [styles.float]: floatable,
-          [styles.show]: show,
-        })}
-        style={position}
-      >
-        <div className={styles.positioner}>{notificationBox}</div>
-      </div>
-    );
-  }
-
-  _getNotificationBox() {
-    const { dataHook, type } = this.props;
+    const { type, className, dataHook } = this.props;
     const icon = this._getIcon();
     const content = this._getContent();
     const textButton = this._getTextButton();
@@ -93,8 +74,8 @@ class FloatingNotification extends React.PureComponent {
 
     return (
       <div
-        className={classNames(styles.root, styles[type])}
         data-hook={dataHook}
+        className={classNames(styles.root, styles[type], className)}
       >
         {icon}
         {content}
@@ -121,72 +102,43 @@ class FloatingNotification extends React.PureComponent {
   }
 
   _getTextButton() {
-    const { linkButtonText, onLinkButtonClick } = this.props;
-    return linkButtonText ? (
+    const { showTextButton, textButtonProps } = this.props;
+    return showTextButton ? (
       <TextButton
         underline={'always'}
         skin={'dark'}
         size={'small'}
         className={styles.textButton}
-        onClick={onLinkButtonClick}
+        {...textButtonProps}
       >
-        {linkButtonText}
+        {textButtonProps.label}
       </TextButton>
     ) : null;
   }
 
   _getButton() {
-    const { buttonText, onButtonClick } = this.props;
-    return buttonText ? (
+    const { showButton, buttonProps } = this.props;
+    return showButton ? (
       <Button
         className={styles.button}
-        onClick={onButtonClick}
         size={'tiny'}
         priority={'secondary'}
         skin={'dark'}
+        {...buttonProps}
         upgrade
       >
-        {buttonText}
+        {buttonProps.label}
       </Button>
     ) : null;
   }
 
   _getClose() {
-    const { onClose } = this.props;
-    return onClose ? (
+    const { showCloseButton, onClose } = this.props;
+    return showCloseButton ? (
       <div className={styles.close} onClick={onClose}>
         <X size={16} />
       </div>
     ) : null;
-  }
-
-  _wrapperRef = el => {
-    this._animationFrameId = requestAnimationFrame(() =>
-      this._positionWrapperFromParent(el),
-    );
-  };
-
-  _positionWrapperFromParent(el) {
-    const { position } = this.state;
-    const { floatable } = this.props;
-
-    if (!position && floatable && el) {
-      const parent = el.parentNode;
-      const newPosition = {
-        width: parent.offsetWidth,
-        height: parent.offsetHeight,
-      };
-
-      if (el.offsetParent === parent) {
-        newPosition.top = 0;
-        newPosition.left = 0;
-      } else {
-        newPosition.top = parent.offsetTop;
-        newPosition.left = parent.offsetLeft;
-      }
-
-      this.setState({ position: newPosition });
-    }
   }
 }
 
