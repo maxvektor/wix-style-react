@@ -54,15 +54,12 @@ export default class SortableList extends WixComponent {
         const shiftDirection = originalIndex <= addedIndex ? 1 : -1;
 
         // Neighbouring items shift
-
         times(maxIndex - minIndex + 1, (i) => {
           const index = i + minIndex;
           const {node} = this.draggableNodes[index] || {};
           const {node: prevNode} = this.draggableNodes[index - shiftDirection] || {};
 
           if (index !== originalIndex && node && prevNode) {
-            // // TODO change this to use actual node size and position
-            // animationShifts[index] = [0, shiftDirection * 72];
             const nodeRect = node.getBoundingClientRect();
             const prevNodeRect = prevNode.getBoundingClientRect();
 
