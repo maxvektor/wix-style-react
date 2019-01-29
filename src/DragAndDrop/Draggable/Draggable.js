@@ -44,6 +44,7 @@ Draggable.propTypes = {
 
   shift: PropTypes.arrayOf(PropTypes.number),
   isDragging: PropTypes.bool,
+  setDragNode: PropTypes.func,
 };
 
 export default Draggable;

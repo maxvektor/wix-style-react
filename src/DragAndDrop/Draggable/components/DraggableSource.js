@@ -141,6 +141,8 @@ export default class DraggableSource extends React.Component {
       renderItem,
       id,
       item,
+      shift,
+      ignoreMouseEvents,
     } = this.props;
 
     if (withHandle) {
@@ -158,24 +160,28 @@ export default class DraggableSource extends React.Component {
     }
 
     // TODO move to styles
-    const transition = this.props.ignoreMouseEvents
+    const [xShift, yShift] = shift || [0, 0];
+    const hasShift = (xShift || yShift);
+
+    const transition = ignoreMouseEvents
       ? 'all .5s'
       : undefined;
-    const transform = this.props.shift
-      ? `translate(${this.props.shift.join('px,')}px)`
-      : '';
-    const pointerEvents = this.props.ignoreMouseEvents
+    const transform = hasShift
+      ? `translate(${xShift}px, ${yShift}px)`
+      : undefined;
+    const pointerEvents = ignoreMouseEvents || hasShift
       ? 'none'
       : undefined;
 
+    const style = {
+      transition,
+      transform,
+      pointerEvents,
+    };
 
     return (
       <div
-        style={{
-          transition,
-          transform,
-          pointerEvents,
-        }}
+        style={style}
       >
         {connectDragSource(renderItem({
           id,

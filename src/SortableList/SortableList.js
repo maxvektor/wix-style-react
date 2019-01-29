@@ -15,7 +15,14 @@ export default class SortableList extends WixComponent {
   state = {
     items: this.props.items || [],
     animationShifts: {},
+    placeholderShift: [0, 0],
     isDragging: null,
+  };
+
+  draggableNodes = [];
+
+  registerDraggableNode = (node, index, item) => {
+    this.draggableNodes[index] = {node, item};
   };
 
   componentWillReceiveProps({ items }) {
@@ -26,6 +33,7 @@ export default class SortableList extends WixComponent {
 
   handleMoveOut = id => {
     this.setState({ items: this.state.items.filter(it => it.id !== id), animationShifts: {} });
+    // Handle nodes
   };
 
   handleHover = ({removedIndex, addedIndex, originalIndex, id, item}) => {
@@ -43,17 +51,34 @@ export default class SortableList extends WixComponent {
       else {
         const minIndex = Math.min(originalIndex, addedIndex);
         const maxIndex = Math.max(originalIndex, addedIndex);
+        const shiftDirection = originalIndex <= addedIndex ? 1 : -1;
 
-        // TODO change this to coordinates
-        const shiftDirection = originalIndex <= addedIndex ? -1 : 1;
+        // Neighbouring items shift
 
         times(maxIndex - minIndex + 1, (i) => {
           const index = i + minIndex;
-          if (index !== originalIndex) {
-            // TODO change this to use actual node size and position
-            animationShifts[index] = [0, shiftDirection * 72];
+          const {node} = this.draggableNodes[index] || {};
+          const {node: prevNode} = this.draggableNodes[index - shiftDirection] || {};
+
+          if (index !== originalIndex && node && prevNode) {
+            // // TODO change this to use actual node size and position
+            // animationShifts[index] = [0, shiftDirection * 72];
+            const nodeRect = node.getBoundingClientRect();
+            const prevNodeRect = prevNode.getBoundingClientRect();
+
+            animationShifts[index] = [prevNodeRect.x - nodeRect.x, prevNodeRect.y - nodeRect.y];
           }
         });
+
+        // Calculating placeholder shift
+        const {node: targetNode} = this.draggableNodes[addedIndex] || {};
+        const {node: placeholderNode} = this.draggableNodes[originalIndex] || {};
+
+        if (targetNode && placeholderNode) {
+          const placeholderNodeRect = placeholderNode.getBoundingClientRect();
+          const targetNodeRect = targetNode.getBoundingClientRect();
+          animationShifts[originalIndex] = [targetNodeRect.x - placeholderNodeRect.x, targetNodeRect.y - placeholderNodeRect.y];
+        }
       }
 
       return { items: nextItems, animationShifts, isDragging };
@@ -134,8 +159,10 @@ export default class SortableList extends WixComponent {
             {this.state.items.map((item, index) => (
               <Draggable
                 key={`${item.id}-${this.props.containerId}`}
+
                 shift={this.state.animationShifts[index]}
-                isDragging={this.state.isDragging && this.state.isDragging !== item.id} // TODO rename prop
+                isDragging={!!this.state.isDragging && this.state.isDragging !== item.id} // TODO rename prop
+                setDragNode={this.registerDraggableNode}
 
                 {...common}
                 id={item.id}
