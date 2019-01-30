@@ -61,7 +61,6 @@ const target = {
       )
     */
     props.onHover({
-      ...monitorItem,
       removedIndex: dragIndex,
       addedIndex: hoverIndex,
       id: monitorItem.id,

@@ -22,22 +22,32 @@ export default class SortableList extends WixComponent {
   draggableNodes = [];
 
   registerDraggableNode = (node, index, item) => {
-    this.draggableNodes[index] = {node, item};
+    this.draggableNodes[index] = {node, index, item};
   };
 
   componentWillReceiveProps({ items }) {
-    if (items) {
-      this.setState({ items });
-    }
+    this.setState(prevState => ({
+      items: items ? items : prevState.items,
+      animationShifts: {},
+      placeholderShift: [0, 0],
+      isDragging: null,
+    }));
   }
 
   handleMoveOut = id => {
-    this.setState({ items: this.state.items.filter(it => it.id !== id), animationShifts: {} });
-    // Handle nodes
+    this.setState({
+      items: this.state.items.filter(it => it.id !== id),
+      animationShifts: {},
+      placeholderShift: [0, 0],
+      isDragging: null
+    });
+    this.draggableNodes = this.draggableNodes.filter(({item}) => item.id !== id);
   };
 
-  handleHover = ({removedIndex, addedIndex, originalIndex, id, item}) => {
+  handleHover = ({removedIndex, addedIndex, id, item}) => {
     this.setState(prevState => {
+      const originalIndex = this.state.items.indexOf(item);
+
       const nextItems = [...prevState.items];
       let animationShifts = {};
       let isDragging = this.state.isDragging;
@@ -45,14 +55,18 @@ export default class SortableList extends WixComponent {
       // New item added from other list
       if (!nextItems.find(it => it.id === id)) {
         nextItems.splice(addedIndex, 0, item);
-        isDragging = true;
+        isDragging = item.id;
       }
 
       // Existing item moved
       else {
+        // TODO refactor this - move to util function & simplify
         const minIndex = Math.min(originalIndex, addedIndex);
         const maxIndex = Math.max(originalIndex, addedIndex);
-        const shiftIndex = (addedIndex - originalIndex) / Math.abs(addedIndex - originalIndex);
+        let shiftIndex = (addedIndex - originalIndex) / Math.abs(addedIndex - originalIndex);
+        if (isNaN(shiftIndex)) {
+          shiftIndex = 0;
+        }
 
         if (shiftIndex > 0) {
           const previousNodeIndex = originalIndex + 1;
@@ -135,14 +149,14 @@ export default class SortableList extends WixComponent {
   };
 
   handleDragStart = data => {
-    this.setState({animationShifts: {}, isDragging: data.id});
+    this.setState({animationShifts: {}, isDragging: data.id, placeholderShift: [0, 0]});
     if (this.props.onDragStart) {
       this.props.onDragStart(data);
     }
   };
 
   handleDragEnd = data => {
-    this.setState({animationShifts: {}, isDragging: null});
+    this.setState({animationShifts: {}, isDragging: null, placeholderShift: [0, 0]});
     if (this.props.onDragEnd) {
       this.props.onDragEnd(data);
     }
