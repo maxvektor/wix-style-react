@@ -12,3 +12,11 @@ The most useful building block you should be aware of is the `<SortableList/>` c
 
 ### Example
 Here is a simple usage of the `<SortableList/>` component with basic styles (Give it a try)!
+
+### Animations
+
+#### Default animation effect
+By default there is an animation for SortableList items positions. Component does not updates its state related to items positions while dragging, but shows you a future state of items animated to new position.
+
+#### Custom animation effects
+Currently there is no possibility to add custom animations.

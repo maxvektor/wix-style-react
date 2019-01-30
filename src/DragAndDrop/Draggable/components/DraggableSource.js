@@ -169,11 +169,15 @@ export default class DraggableSource extends React.Component {
     const transform = hasShift
       ? `translate(${xShift}px, ${yShift}px)`
       : undefined;
+    const willChange = hasShift
+      ? 'transform'
+      : undefined;
     const pointerEvents = ignoreMouseEvents || hasShift
       ? 'none'
       : undefined;
 
     const style = {
+      willChange,
       transition,
       transform,
       pointerEvents,
