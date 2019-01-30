@@ -44,6 +44,8 @@
   | withHandle       | bool     | false        | -          | should whole item be draggable or just handle on it|
   | usePortal        | bool     | false        | -          | render item preview into body|
   | dragPreview      | bool     | false        | -          | in case if you have nested SortableLists, you need to set dragPreview to true when you drag nested SortableList |
+  | animationDuration| number   | 0            | -          | animation duration. Please note, `SortableList` uses CSS `transition`s to animate itself
+  | animationTiming  | string   | ''           | -          | animation timing function
 </details>
 
 Some details about complex props

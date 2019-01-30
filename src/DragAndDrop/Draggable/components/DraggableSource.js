@@ -133,38 +133,13 @@ export default class DraggableSource extends React.Component {
     }
   }
 
-  _renderDraggableItem() {
-    const {
-      isDragging,
-      connectDragSource,
-      withHandle,
-      renderItem,
-      id,
-      item,
-      shift,
-      ignoreMouseEvents,
-    } = this.props;
-
-    if (withHandle) {
-      return renderItem({
-        id,
-        item,
-        isPlaceholder: isDragging,
-        connectHandle: handle => {
-          const handleWithRef = React.cloneElement(handle, {
-            ref: node => (this.handleNode = ReactDOM.findDOMNode(node)),
-          });
-          return connectDragSource(handleWithRef);
-        },
-      });
-    }
-
-    // TODO move to styles
+  _getWrapperStyles() {
+    const {shift, ignoreMouseEvents, animationDuration, animationTiming} = this.props;
     const [xShift, yShift] = shift || [0, 0];
     const hasShift = (xShift || yShift);
 
     const transition = ignoreMouseEvents
-      ? 'all .5s'
+      ? `transform ${animationDuration}ms ${animationTiming}`
       : undefined;
     const transform = hasShift
       ? `translate(${xShift}px, ${yShift}px)`
@@ -176,23 +151,48 @@ export default class DraggableSource extends React.Component {
       ? 'none'
       : undefined;
 
-    const style = {
+    return {
       willChange,
       transition,
       transform,
       pointerEvents,
     };
+  }
+
+  _renderDraggableItem() {
+    const {
+      isDragging,
+      connectDragSource,
+      withHandle,
+      renderItem,
+      id,
+      item,
+    } = this.props;
+
+    const content = withHandle ? (
+      renderItem({
+        id,
+        item,
+        isPlaceholder: isDragging,
+        connectHandle: handle => {
+          const handleWithRef = React.cloneElement(handle, {
+            ref: node => (this.handleNode = ReactDOM.findDOMNode(node)),
+          });
+          return connectDragSource(handleWithRef);
+        },
+      })
+    ) : (
+      connectDragSource(renderItem({
+        id,
+        item,
+        isPlaceholder: isDragging,
+        connectHandle: noop,
+      }))
+    );
 
     return (
-      <div
-        style={style}
-      >
-        {connectDragSource(renderItem({
-          id,
-          item,
-          isPlaceholder: isDragging,
-          connectHandle: noop,
-        }))}
+      <div style={this._getWrapperStyles()}>
+        {content}
       </div>
     );
   }
@@ -252,4 +252,8 @@ DraggableSource.propTypes = {
 
   shift: PropTypes.arrayOf(PropTypes.number),
   ignoreMouseEvents: PropTypes.bool,
+  /** animation duration in ms, default = 0 - disabled */
+  animationDuration: PropTypes.number,
+  /** animation timing function, default = linear */
+  animationTiming: PropTypes.string,
 };

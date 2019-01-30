@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import WixComponent from '../BaseComponents/WixComponent';
-import { Draggable } from '../DragAndDrop/Draggable';
+import {Draggable} from '../DragAndDrop/Draggable';
 import Container from '../DragAndDrop/Draggable/components/Container';
 import DragDropContextProvider from '../DragDropContextProvider';
 
@@ -12,6 +12,11 @@ import times from '../utils/operators/times';
  * Attaches Drag and Drop behavior to a list of items
  */
 export default class SortableList extends WixComponent {
+  static defaultProps = {
+    animationDuration: 0,
+    animationTiming: '',
+  };
+
   state = {
     items: this.props.items || [],
     animationShifts: {},
@@ -19,13 +24,13 @@ export default class SortableList extends WixComponent {
     isDragging: null,
   };
 
-  draggableNodes = [];
+  wrapperNodes = [];
 
-  registerDraggableNode = (node, index, item) => {
-    this.draggableNodes[index] = {node, index, item};
+  setWrapperNode = (node, index, item) => {
+    this.wrapperNodes[index] = {node, index, item};
   };
 
-  componentWillReceiveProps({ items }) {
+  componentWillReceiveProps({items}) {
     this.setState(prevState => ({
       items: items ? items : prevState.items,
       animationShifts: {},
@@ -41,94 +46,95 @@ export default class SortableList extends WixComponent {
       placeholderShift: [0, 0],
       isDragging: null
     });
-    this.draggableNodes = this.draggableNodes.filter(({item}) => item.id !== id);
+    this.wrapperNodes = this.wrapperNodes.filter(({item}) => item.id !== id);
   };
 
-  handleHover = ({removedIndex, addedIndex, id, item}) => {
+  getAnimationShifts = (originalIndex, moveToIndex, shiftIndex) => {
+    const shiftForward = shiftIndex > 0;
+
+    const animationShifts = {};
+
+    const minIndex = Math.min(originalIndex, moveToIndex);
+    const maxIndex = Math.max(originalIndex, moveToIndex);
+
+    const previousNodeIndex = originalIndex + (shiftForward ? 1 : -1);
+    const {node} = this.wrapperNodes[originalIndex] || {};
+    const {node: prevNode} = this.wrapperNodes[previousNodeIndex] || {};
+
+    if (node && prevNode && originalIndex !== moveToIndex) {
+      const nodeRect = node.getBoundingClientRect();
+      const prevNodeRect = prevNode.getBoundingClientRect();
+
+      if (shiftForward) {
+        animationShifts[previousNodeIndex] = [
+          (nodeRect.y === prevNodeRect.y ? (nodeRect.left - prevNodeRect.left) : 0),
+          (nodeRect.x === prevNodeRect.x ? (nodeRect.top - prevNodeRect.top) : 0),
+        ];
+      } else {
+        animationShifts[previousNodeIndex] = [
+          (nodeRect.y === prevNodeRect.y ? (nodeRect.right - prevNodeRect.right) : 0),
+          (nodeRect.x === prevNodeRect.x ? (nodeRect.bottom - prevNodeRect.bottom) : 0),
+        ];
+      }
+
+      times(maxIndex - minIndex + 1, (i) => {
+        const index = i + minIndex;
+        if (index !== originalIndex && index !== previousNodeIndex) {
+          animationShifts[index] = animationShifts[previousNodeIndex];
+        }
+      });
+    }
+
+    return animationShifts;
+  };
+
+  getPlaceholderShift = (originalIndex, moveToIndex, shiftIndex) => {
+    const shiftForward = shiftIndex > 0;
+    const {node: target} = this.wrapperNodes[moveToIndex] || {};
+    const {node: placeholder} = this.wrapperNodes[originalIndex] || {};
+    let shiftX = 0;
+    let shiftY = 0;
+
+    if (target && placeholder) {
+      const placeholderRect = placeholder.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+
+      if (placeholderRect.y === targetRect.y) {
+        shiftX = shiftForward ? (targetRect.right - placeholderRect.right) : (targetRect.left - placeholderRect.left);
+      }
+
+      if (placeholderRect.x === targetRect.x) {
+        shiftY = shiftForward ? (targetRect.bottom - placeholderRect.bottom) : (targetRect.top - placeholderRect.top);
+      }
+    }
+
+    return [shiftX, shiftY];
+  };
+
+  handleHover = ({addedIndex, item}) => {
     this.setState(prevState => {
       const originalIndex = this.state.items.indexOf(item);
-
-      const nextItems = [...prevState.items];
+      const items = [...prevState.items];
       let animationShifts = {};
       let isDragging = this.state.isDragging;
 
       // New item added from other list
-      if (!nextItems.find(it => it.id === id)) {
-        nextItems.splice(addedIndex, 0, item);
+      if (originalIndex < 0) {
+        items.splice(addedIndex, 0, item);
         isDragging = item.id;
       }
-
       // Existing item moved
       else {
-        // TODO refactor this - move to util function & simplify
-        const minIndex = Math.min(originalIndex, addedIndex);
-        const maxIndex = Math.max(originalIndex, addedIndex);
-        let shiftIndex = (addedIndex - originalIndex) / Math.abs(addedIndex - originalIndex);
-        if (isNaN(shiftIndex)) {
-          shiftIndex = 0;
-        }
+        const moveToIndex = Math.min(items.length - 1, addedIndex);
+        const shiftForward = moveToIndex > originalIndex;
 
-        if (shiftIndex > 0) {
-          const previousNodeIndex = originalIndex + 1;
-          const {node} = this.draggableNodes[originalIndex] || {};
-          const {node: prevNode} = this.draggableNodes[previousNodeIndex] || {};
-
-          if (node && prevNode) {
-            const nodeRect = node.getBoundingClientRect();
-            const prevNodeRect = prevNode.getBoundingClientRect();
-
-            animationShifts[previousNodeIndex] = [
-              (nodeRect.y === prevNodeRect.y ? (nodeRect.left - prevNodeRect.left) : 0),
-              (nodeRect.x === prevNodeRect.x ? (nodeRect.top - prevNodeRect.top) : 0),
-            ];
-
-            times(maxIndex - minIndex + 1, (i) => {
-              const index = i + minIndex;
-              if (index !== originalIndex && index !== previousNodeIndex) {
-                animationShifts[index] = animationShifts[previousNodeIndex];
-              }
-            });
-          }
-
-        } else if (shiftIndex < 0) {
-          const previousNodeIndex = originalIndex - 1;
-          const {node} = this.draggableNodes[originalIndex] || {};
-          const {node: prevNode} = this.draggableNodes[previousNodeIndex] || {};
-
-          if (node && prevNode) {
-            const nodeRect = node.getBoundingClientRect();
-            const prevNodeRect = prevNode.getBoundingClientRect();
-
-            animationShifts[previousNodeIndex] = [
-              (nodeRect.y === prevNodeRect.y ? (nodeRect.right - prevNodeRect.right): 0),
-              (nodeRect.x === prevNodeRect.x ? (nodeRect.bottom - prevNodeRect.bottom) : 0),
-            ];
-
-            times(maxIndex - minIndex + 1, (i) => {
-              const index = i + minIndex;
-              if (index !== originalIndex && index !== previousNodeIndex) {
-                animationShifts[index] = animationShifts[previousNodeIndex];
-              }
-            });
-          }
-        }
-
-
-        // Calculating placeholder shift
-        const {node: targetNode} = this.draggableNodes[addedIndex] || {};
-        const {node: placeholderNode} = this.draggableNodes[originalIndex] || {};
-
-        if (targetNode && placeholderNode) {
-          const placeholderNodeRect = placeholderNode.getBoundingClientRect();
-          const targetNodeRect = targetNode.getBoundingClientRect();
-          animationShifts[originalIndex] = [
-            (placeholderNodeRect.y === targetNodeRect.y ? (shiftIndex > 0 ? (targetNodeRect.right - placeholderNodeRect.right) : (targetNodeRect.left - placeholderNodeRect.left)): 0),
-            (placeholderNodeRect.x === targetNodeRect.x ? (shiftIndex > 0 ? (targetNodeRect.bottom - placeholderNodeRect.bottom) : (targetNodeRect.top - placeholderNodeRect.top)) : 0),
-          ];
-        }
+        animationShifts = {
+          ...this.getAnimationShifts(originalIndex, moveToIndex, shiftForward),
+          [originalIndex]: this.getPlaceholderShift(originalIndex, moveToIndex, shiftForward),
+        };
       }
 
-      return { items: nextItems, animationShifts, isDragging };
+      return {items, animationShifts, isDragging};
     });
   };
 
@@ -163,7 +169,7 @@ export default class SortableList extends WixComponent {
   };
 
   renderPreview() {
-    const { className, contentClassName, renderItem } = this.props;
+    const {className, contentClassName, renderItem} = this.props;
     return (
       <div className={className}>
         <div className={contentClassName}>
@@ -183,10 +189,21 @@ export default class SortableList extends WixComponent {
   }
 
   render() {
-    const { className, contentClassName, groupName, dragPreview } = this.props;
+    const {
+      className,
+      contentClassName,
+      groupName,
+      dragPreview,
+      containerId,
+      renderItem,
+      withHandle,
+      usePortal,
+      animationDuration,
+      animationTiming,
+    } = this.props;
     const common = {
       groupName,
-      containerId: this.props.containerId,
+      containerId,
       onHover: this.handleHover,
       onMoveOut: this.handleMoveOut,
     };
@@ -205,19 +222,21 @@ export default class SortableList extends WixComponent {
           <div className={contentClassName}>
             {this.state.items.map((item, index) => (
               <Draggable
-                key={`${item.id}-${this.props.containerId}`}
+                key={`${item.id}-${containerId}`}
 
                 shift={this.state.animationShifts[index]}
-                isDragging={!!this.state.isDragging && this.state.isDragging !== item.id} // TODO rename prop
-                setDragNode={this.registerDraggableNode}
+                hasDragged={!!this.state.isDragging && this.state.isDragging !== item.id}
+                setWrapperNode={this.setWrapperNode}
+                animationDuration={animationDuration}
+                animationTiming={animationTiming}
 
                 {...common}
                 id={item.id}
                 index={index}
                 item={item}
-                renderItem={this.props.renderItem}
-                withHandle={this.props.withHandle}
-                usePortal={this.props.usePortal}
+                renderItem={renderItem}
+                withHandle={withHandle}
+                usePortal={usePortal}
                 onDrop={this.handleDrop}
                 onDragStart={this.handleDragStart}
                 onDragEnd={this.handleDragEnd}
@@ -237,10 +256,10 @@ SortableList.propTypes = {
   /** in case of wrong position of item during drag you can force SortableList to use portals */
   usePortal: PropTypes.bool,
   /**
-    if you are having nested SortableLists,
-    list that you are currently dragging need to be marked as dragPreview
-    inside of renderItem callback
-  */
+   if you are having nested SortableLists,
+   list that you are currently dragging need to be marked as dragPreview
+   inside of renderItem callback
+   */
   dragPreview: PropTypes.bool,
   /** list of items with {id: any} */
   items: PropTypes.array,
@@ -252,4 +271,8 @@ SortableList.propTypes = {
   className: PropTypes.string,
   /** className of the first items parent container */
   contentClassName: PropTypes.string,
+  /** animation duration in ms, default = 0 - disabled */
+  animationDuration: PropTypes.number,
+  /** animation timing function, default = '' (ease) */
+  animationTiming: PropTypes.string,
 };

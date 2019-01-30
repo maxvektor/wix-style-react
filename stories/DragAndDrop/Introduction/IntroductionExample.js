@@ -76,6 +76,8 @@ export default class IntroductionExample extends React.Component {
         items={this.state.items}
         renderItem={this.renderItem}
         onDrop={this.handleDrop}
+        animationDuration={1000}
+        animationTiming="cubic-bezier(0.19, 1, 0.22, 1)"
       />
     );
   }

@@ -78,7 +78,7 @@ const collect = connect => ({
 @DropTarget(ItemTypes.DRAGGABLE, target, collect)
 class DraggableTarget extends WixComponent {
   registerNode = (node) => {
-    this.props.setDragNode(node, this.props.index, this.props.item);
+    this.props.setWrapperNode(node, this.props.index, this.props.item);
   };
 
   render() {
@@ -97,7 +97,7 @@ DraggableTarget.propTypes = {
   index: PropTypes.number,
   onMoveOut: PropTypes.func,
   onHover: PropTypes.func,
-  setDragNode: PropTypes.func,
+  setWrapperNode: PropTypes.func,
   item: PropTypes.object,
 };
 

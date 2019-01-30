@@ -7,10 +7,10 @@ import DraggableTarget from './components/DraggableTarget';
 
 export class Draggable extends WixComponent {
   render() {
-    const { isDragging, ...restProps } = this.props;
+    const { hasDragged, ...restProps } = this.props;
     return (
       <DraggableTarget {...restProps}>
-        <DraggableSource {...restProps} ignoreMouseEvents={isDragging} />
+        <DraggableSource {...restProps} ignoreMouseEvents={hasDragged} />
       </DraggableTarget>
     );
   }
@@ -43,8 +43,12 @@ Draggable.propTypes = {
   onDragEnd: PropTypes.func,
 
   shift: PropTypes.arrayOf(PropTypes.number),
-  isDragging: PropTypes.bool,
-  setDragNode: PropTypes.func,
+  hasDragged: PropTypes.bool,
+  setWrapperNode: PropTypes.func,
+  /** animation duration in ms, default = 0 - disabled */
+  animationDuration: PropTypes.number,
+  /** animation timing function, default = linear */
+  animationTiming: PropTypes.string,
 };
 
 export default Draggable;

@@ -116,6 +116,7 @@ export default class MultiAreaListWithSortableColumns extends React.Component {
           items={item.items}
           renderItem={this.renderCell}
           onDrop={this.handleDropCell}
+          animationDuration={250}
         />
       </div>
     );
@@ -133,6 +134,7 @@ export default class MultiAreaListWithSortableColumns extends React.Component {
             items={this.state.columns}
             renderItem={this.renderColumn}
             onDrop={this.handleDropColumn}
+            animationDuration={250}
           />
         </div>
       </DragDropContextProvider>
