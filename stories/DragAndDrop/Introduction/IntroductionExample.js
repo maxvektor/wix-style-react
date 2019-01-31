@@ -13,7 +13,7 @@ export default class IntroductionExample extends React.Component {
       items: [
         {
           id: 'a',
-          text: 'Item 1',
+          text: 'Item 1 (Set as undraggable)',
         },
         {
           id: 'b',
