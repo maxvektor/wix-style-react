@@ -48,7 +48,7 @@ export default class SortableList extends WixComponent {
    * Calculates shifts (offsets) for every item that needs to be moved
    * @param {number} originalIndex Draggable item source index
    * @param {number} moveToIndex New index where is currently draggable item should appear
-   * @param {number} shiftIndex ShiftIndex could store only 1 or -1, it describes a direction (down|up) for currently draggable item
+   * @param {boolean} shiftForward is shifting to forward position
    * @sample
    *  We have three nodes @ DOM:
    *  Item1 has position {top1, left1, bottom1, right1}
@@ -57,7 +57,7 @@ export default class SortableList extends WixComponent {
    *  When we're dragging Item2 to replace Item1 we have:
    *    originalIndex: 1
    *    moveToIndex: 0
-   *    shiftIndex: -1
+   *    shiftForward: false
    *  Item2's placeholder should be animated to Item1's position
    *  Item1's container should be animated to Item2's position
    *  To be sure that new position is correct we should relay our calculations on moving direction:
@@ -65,9 +65,7 @@ export default class SortableList extends WixComponent {
    *    When we're dragging item to the bottom, another shifting items should be visually moved to difference of their top positions (it means a height of current item, but with its margins)
    *  Same logic exists for horizontals sortable lists and all calculations are based on differences between left or right positions
    */
-  getAnimationShifts = (originalIndex, moveToIndex, shiftIndex) => {
-    const shiftForward = shiftIndex > 0;
-
+  getAnimationShifts = (originalIndex, moveToIndex, shiftForward) => {
     const animationShifts = {};
 
     const minIndex = Math.min(originalIndex, moveToIndex);
