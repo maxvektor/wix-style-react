@@ -52,7 +52,7 @@ Draggable.propTypes = {
   animationDuration: PropTypes.number,
   /** animation timing function, default = linear */
   animationTiming: PropTypes.string,
-  /** callback that prevents item from dragging */
+  /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
 };
 
