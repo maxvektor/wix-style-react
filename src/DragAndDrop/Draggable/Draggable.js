@@ -44,7 +44,9 @@ Draggable.propTypes = {
 
   /** visual positioning shifting for an element (transform: translate) without moving it from its real position at DOM (left, top) */
   shift: PropTypes.arrayOf(PropTypes.number),
+  /** flag that indicates that there's an item being dragged */
   hasDragged: PropTypes.bool,
+  /** sets draggable item node & additional info for animation positions calculations */
   setWrapperNode: PropTypes.func,
   /** animation duration in ms, default = 0 - disabled */
   animationDuration: PropTypes.number,
