@@ -78,6 +78,17 @@ const source = {
       }
     }
   },
+  canDrag: (
+    { id, index, containerId, groupName, item, canDrag },
+  ) => {
+    return canDrag({
+      id,
+      index,
+      containerId,
+      groupName,
+      item,
+    });
+  },
   isDragging: ({ id, containerId, groupName }, monitor) => {
     const item = monitor.getItem();
     const isSameGroup =
@@ -256,4 +267,6 @@ DraggableSource.propTypes = {
   animationDuration: PropTypes.number,
   /** animation timing function, default = linear */
   animationTiming: PropTypes.string,
+  /** callback that prevents item from dragging */
+  canDrag: PropTypes.func,
 };
