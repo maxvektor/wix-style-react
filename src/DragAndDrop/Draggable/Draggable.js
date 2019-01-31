@@ -42,6 +42,7 @@ Draggable.propTypes = {
   /** callback for drag end */
   onDragEnd: PropTypes.func,
 
+  /** visual positioning shifting for an element (transform: translate) without moving it from its real position at DOM (left, top) */
   shift: PropTypes.arrayOf(PropTypes.number),
   hasDragged: PropTypes.bool,
   setWrapperNode: PropTypes.func,

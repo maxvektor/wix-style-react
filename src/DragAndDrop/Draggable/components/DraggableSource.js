@@ -261,6 +261,7 @@ DraggableSource.propTypes = {
   onDragStart: PropTypes.func,
   onDragEnd: PropTypes.func,
 
+  /** visual positioning shifting for an element (transform: translate) without moving it from its real position at DOM (left, top) */
   shift: PropTypes.arrayOf(PropTypes.number),
   ignoreMouseEvents: PropTypes.bool,
   /** animation duration in ms, default = 0 - disabled */

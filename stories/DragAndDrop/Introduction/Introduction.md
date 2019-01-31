@@ -16,7 +16,11 @@ Here is a simple usage of the `<SortableList/>` component with basic styles (Giv
 ### Animations
 
 #### Default animation effect
-By default there is an animation for SortableList items positions. Component does not updates its state related to items positions while dragging, but shows you a future state of items animated to new position.
+SortableList has default animation effect - visual items repositioning without changing component's state. This is just a view for future items positions.
+
+Default animation effect could be overridden by using two props:
+* `animationDuration` (0 by default, without animation) - value in ms
+* `animationTiming` ('' by default) - timing function for an animation, could be any value which will be accepted by `animation-timing-function` at CSS
 
 #### Custom animation effects
 Currently there is no possibility to add custom animations.
