@@ -20,8 +20,7 @@ export default class SortableList extends WixComponent {
   state = {
     items: this.props.items || [],
     animationShifts: {},
-    placeholderShift: [0, 0],
-    isDragging: null,
+    draggedId: null,
   };
 
   wrapperNodes = [];
@@ -30,22 +29,18 @@ export default class SortableList extends WixComponent {
     this.wrapperNodes[index] = {node, index, item};
   };
 
+  reSetAnimationState = (overrides = {}) => {
+    this.setState({animationShifts: {}, draggedId: null, ...overrides});
+  };
+
   componentWillReceiveProps({items}) {
-    this.setState(prevState => ({
-      items: items ? items : prevState.items,
-      animationShifts: {},
-      placeholderShift: [0, 0],
-      isDragging: null,
-    }));
+    // We clear state on drag end if element was dragged from another list,
+    // `onDragEnd` will be called on "source" list, not "taget" one.
+    this.reSetAnimationState({items: items ? items : this.state.items});
   }
 
   handleMoveOut = id => {
-    this.setState({
-      items: this.state.items.filter(it => it.id !== id),
-      animationShifts: {},
-      placeholderShift: [0, 0],
-      isDragging: null
-    });
+    this.reSetAnimationState({items: this.state.items.filter(it => it.id !== id)});
     this.wrapperNodes = this.wrapperNodes.filter(({item}) => item.id !== id);
   };
 
@@ -111,17 +106,27 @@ export default class SortableList extends WixComponent {
     return [shiftX, shiftY];
   };
 
+  /**
+   * Called when DragSource (list item) is hovered over DragTarget (other list item)
+   * Calculates animation shifts & adds new element if it was dragged from another list
+   *
+   * @param {object} prop Prop
+   * @param {number} prop.addedIndex Index to where dragged element should be added
+   * @param {number} prop.removedIndex Index from where dragged element was removed
+   * @param {number|string} prop.id item's `id`
+   * @param {object} prop.item item from `items` prop that is being dragged
+   * */
   handleHover = ({addedIndex, item}) => {
     this.setState(prevState => {
       const originalIndex = this.state.items.indexOf(item);
       const items = [...prevState.items];
       let animationShifts = {};
-      let isDragging = this.state.isDragging;
+      let {draggedId} = this.state;
 
       // New item added from other list
       if (originalIndex < 0) {
         items.splice(addedIndex, 0, item);
-        isDragging = item.id;
+        draggedId = item.id;
       }
       // Existing item moved
       else {
@@ -134,7 +139,7 @@ export default class SortableList extends WixComponent {
         };
       }
 
-      return {items, animationShifts, isDragging};
+      return {items, animationShifts, draggedId};
     });
   };
 
@@ -155,14 +160,14 @@ export default class SortableList extends WixComponent {
   };
 
   handleDragStart = data => {
-    this.setState({animationShifts: {}, isDragging: data.id, placeholderShift: [0, 0]});
+    this.reSetAnimationState({draggedId: data.id});
     if (this.props.onDragStart) {
       this.props.onDragStart(data);
     }
   };
 
   handleDragEnd = data => {
-    this.setState({animationShifts: {}, isDragging: null, placeholderShift: [0, 0]});
+    this.reSetAnimationState();
     if (this.props.onDragEnd) {
       this.props.onDragEnd(data);
     }
@@ -225,7 +230,7 @@ export default class SortableList extends WixComponent {
                 key={`${item.id}-${containerId}`}
 
                 shift={this.state.animationShifts[index]}
-                hasDragged={!!this.state.isDragging && this.state.isDragging !== item.id}
+                hasDragged={!!this.state.draggedId && this.state.draggedId !== item.id}
                 setWrapperNode={this.setWrapperNode}
                 animationDuration={animationDuration}
                 animationTiming={animationTiming}
