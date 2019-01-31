@@ -81,13 +81,13 @@ const source = {
   canDrag: (
     { id, index, containerId, groupName, item, canDrag },
   ) => {
-    return canDrag({
+    return canDrag ? canDrag({
       id,
       index,
       containerId,
       groupName,
       item,
-    });
+    }) : true;
   },
   isDragging: ({ id, containerId, groupName }, monitor) => {
     const item = monitor.getItem();
