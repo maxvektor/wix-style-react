@@ -15,12 +15,13 @@ import {
   Styles as SortableListStyles,
 } from './SortableList';
 
-import Introduction from './Introduction';
+import { Introduction, IntroductionAnimated } from './Introduction';
 import Styles from './Styles';
 import DragDropContextProvider from './DragDropContextProvider';
 
 storiesOf('WIP/Drag And Drop', module)
   .add('Introduction', () => <Introduction />)
+  .add('Introduction Animated', () => <IntroductionAnimated />)
   .add('Styles', () => <Styles />)
   .add('DragDropContextProvider', () => <DragDropContextProvider />);
 

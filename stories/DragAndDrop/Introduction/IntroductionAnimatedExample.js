@@ -13,7 +13,7 @@ export default class IntroductionExample extends React.Component {
       items: [
         {
           id: 'a',
-          text: 'Item 1',
+          text: 'Item 1 (Marked as undraggable)',
         },
         {
           id: 'b',
@@ -25,7 +25,7 @@ export default class IntroductionExample extends React.Component {
         },
         {
           id: 'd',
-          text: 'Item 4',
+          text: 'Item 4: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dictum dui vel ipsum varius dignissim. Quisque facilisis eu ex vitae feugiat. Integer rutrum tortor in neque imperdiet, sit amet commodo turpis tempor',
         },
         {
           id: 'e',
@@ -68,6 +68,10 @@ export default class IntroductionExample extends React.Component {
     );
   };
 
+  canDrag = ({ id }) => {
+    return id !== 'a';
+  };
+
   render() {
     return (
       <SortableList
@@ -76,6 +80,9 @@ export default class IntroductionExample extends React.Component {
         items={this.state.items}
         renderItem={this.renderItem}
         onDrop={this.handleDrop}
+        animationDuration={1000}
+        animationTiming="cubic-bezier(0.19, 1, 0.22, 1)"
+        canDrag={this.canDrag}
       />
     );
   }
