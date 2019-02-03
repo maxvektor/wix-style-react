@@ -50,6 +50,7 @@ export const editableSelectorTestkitFactory = enzymeTestkitFactoryCreator(load('
 export const emptyStateTestkitFactory = enzymeTestkitFactoryCreator(load('../src/EmptyState/EmptyState.driver'));
 export const filePickerTestkitFactory = enzymeTestkitFactoryCreator(load('../src/FilePicker/FilePicker.driver'));
 export const floatingHelperTestkitFactory = enzymeTestkitFactoryCreator(load('../src/FloatingHelper/FloatingHelper.driver'));
+export const floatingNotificationTestkitFactory = enzymeUniTestkitFactoryCreator(load('../src/FloatingNotification/FloatingNotification.driver'));
 export const formFieldTestkitFactory = enzymeTestkitFactoryCreator(load('../src/FormField/FormField.driver'));
 export const generatedTestComponentTestkitFactory = enzymeUniTestkitFactoryCreator(load('../src/GeneratedTestComponent/GeneratedTestComponent.driver'));
 export const genericModalLayoutTestkitFactory = enzymeTestkitFactoryCreator(load('../src/GenericModalLayout/GenericModalLayout.driver'));

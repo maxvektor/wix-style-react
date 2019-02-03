@@ -50,6 +50,7 @@ export const editableSelectorTestkitFactory = testkitFactoryCreator(load('../src
 export const emptyStateTestkitFactory = testkitFactoryCreator(load('../src/EmptyState/EmptyState.driver'));
 export const filePickerTestkitFactory = testkitFactoryCreator(load('../src/FilePicker/FilePicker.driver'));
 export const floatingHelperTestkitFactory = testkitFactoryCreator(load('../src/FloatingHelper/FloatingHelper.driver'));
+export const floatingNotificationTestkitFactory = uniTestkitFactoryCreator(load('../src/FloatingNotification/FloatingNotification.driver'));
 export const formFieldTestkitFactory = testkitFactoryCreator(load('../src/FormField/FormField.driver'));
 export const generatedTestComponentTestkitFactory = uniTestkitFactoryCreator(load('../src/GeneratedTestComponent/GeneratedTestComponent.driver'));
 export const genericModalLayoutTestkitFactory = testkitFactoryCreator(load('../src/GenericModalLayout/GenericModalLayout.driver'));

@@ -19,9 +19,7 @@ class FloatingNotification extends React.PureComponent {
   static displayName = 'FloatingNotification';
 
   static propTypes = {
-    /** data-hook argument to root element */
     dataHook: PropTypes.string,
-
     className: PropTypes.string,
 
     /** the type of notification */
