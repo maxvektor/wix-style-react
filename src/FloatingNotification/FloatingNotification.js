@@ -54,6 +54,8 @@ class FloatingNotification extends React.PureComponent {
 
   static defaultProps = {
     type: NOTIFICATION_TYPES.STANDARD,
+    buttonProps: {},
+    textButtonProps: {},
   };
 
   state = {
@@ -95,7 +97,7 @@ class FloatingNotification extends React.PureComponent {
   _getContent() {
     const { text } = this.props;
     return (
-      <Text size={'small'} ellipsis>
+      <Text size={'small'} ellipsis dataHook={'FloatingNotification-text'}>
         {text}
       </Text>
     );
@@ -103,31 +105,39 @@ class FloatingNotification extends React.PureComponent {
 
   _getTextButton() {
     const { showTextButton, textButtonProps } = this.props;
+    const textButtonText = textButtonProps.label;
+    const props = { ...textButtonProps };
+    delete props.label;
+
     return showTextButton ? (
       <TextButton
         underline={'always'}
         skin={'dark'}
         size={'small'}
         className={styles.textButton}
-        {...textButtonProps}
+        {...props}
       >
-        {textButtonProps.label}
+        {textButtonText}
       </TextButton>
     ) : null;
   }
 
   _getButton() {
     const { showButton, buttonProps } = this.props;
+    const buttonText = buttonProps.label;
+    const props = { ...buttonProps };
+    delete props.label;
+
     return showButton ? (
       <Button
         className={styles.button}
         size={'tiny'}
         priority={'secondary'}
         skin={'dark'}
-        {...buttonProps}
+        {...props}
         upgrade
       >
-        {buttonProps.label}
+        {buttonText}
       </Button>
     ) : null;
   }
