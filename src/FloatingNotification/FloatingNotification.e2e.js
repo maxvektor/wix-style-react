@@ -36,8 +36,4 @@ describe('FloatingNotification', () => {
   eyes.it('should render', async () => {
     await createDriver();
   });
-
-  eyes.it('should render live example', async () => {
-    await createDriver('story-floating-notification-live-example');
-  });
 });
