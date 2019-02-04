@@ -10,7 +10,7 @@ import { storySettings } from '../../stories/FloatingNotification/storySettings'
 
 const eyes = eyesItInstance();
 
-describe('FloatingNotification', () => {
+describe('FloatingNotification', () => {// eslint-disable-line
   const storyUrl = createStoryUrl({
     kind: storySettings.category,
     story: storySettings.storyName,
@@ -33,7 +33,7 @@ describe('FloatingNotification', () => {
     await browser.get(storyUrl);
   });
 
-  eyes.it('should render', async () => {
+  eyes.it('should render all examples', async () => {
     await createDriver();
   });
 });

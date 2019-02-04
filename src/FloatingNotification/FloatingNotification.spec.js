@@ -1,36 +1,23 @@
 import React from 'react';
-import sinon from 'sinon';
-import { createUniDriverFactory } from 'wix-ui-test-utils/uni-driver-factory';
+import { createRendererWithUniDriver, cleanup } from '../../test/utils/unit';
 
-import FloatingNotification, {
-  NOTIFICATION_TYPES,
-} from './FloatingNotification';
+import FloatingNotification from './FloatingNotification';
 import { floatingNotificationPrivateDriverFactory } from './FloatingNotification.driver.private';
-import { StatusComplete } from 'wix-ui-icons-common/dist/src';
 
 describe('FloatingNotification', () => {
   const someText = 'someText';
   const someButtonLabel = 'someButtonLabel';
-  const someButtonDataHook = 'someButtonDataHook';
-  const someButtonOnClick = sinon.spy();
+  const someButtonOnClick = jest.fn();
+  const render = createRendererWithUniDriver(
+    floatingNotificationPrivateDriverFactory,
+  );
 
   const createDriver = props =>
-    createUniDriverFactory(floatingNotificationPrivateDriverFactory)(
-      <FloatingNotification {...props} />,
-    );
+    render(<FloatingNotification {...props} />).driver;
 
   afterEach(() => {
-    someButtonOnClick.reset();
-  });
-
-  Object.values(NOTIFICATION_TYPES).forEach(type => {
-    it(`should render with correct types: type ${type}`, async () => {
-      const driver = createDriver({
-        type,
-      });
-
-      expect(await driver.getType()).toEqual(type);
-    });
+    someButtonOnClick.mockRestore();
+    cleanup();
   });
 
   it('should render text', async () => {
@@ -46,16 +33,13 @@ describe('FloatingNotification', () => {
       showButton: true,
       buttonProps: {
         label: someButtonLabel,
-        dataHook: someButtonDataHook,
         onClick: someButtonOnClick,
       },
     });
 
-    expect(await driver.getButtonText(someButtonDataHook)).toEqual(
-      someButtonLabel,
-    );
-    await driver.clickButton(someButtonDataHook);
-    expect(someButtonOnClick.calledOnce).toBeTruthy;
+    expect(await driver.getButtonLabel()).toEqual(someButtonLabel);
+    await driver.clickButton();
+    expect(someButtonOnClick).toHaveBeenCalledTimes(1);
   });
 
   it('should allow rendering text button', async () => {
@@ -63,23 +47,12 @@ describe('FloatingNotification', () => {
       showTextButton: true,
       textButtonProps: {
         label: someButtonLabel,
-        dataHook: someButtonDataHook,
         onClick: someButtonOnClick,
       },
     });
 
-    expect(await driver.getTextButtonText(someButtonDataHook)).toEqual(
-      someButtonLabel,
-    );
-    await driver.clickTextButton(someButtonDataHook);
-    expect(someButtonOnClick.calledOnce).toBeTruthy;
-  });
-
-  it('should allow rendering prefix icon', async () => {
-    const driver = createDriver({
-      prefixIcon: <StatusComplete />,
-    });
-
-    expect((await driver.getPrefixIcon()).exists()).toBeTruthy();
+    expect(await driver.getTextButtonLabel()).toEqual(someButtonLabel);
+    await driver.clickTextButton();
+    expect(someButtonOnClick).toHaveBeenCalledTimes(1);
   });
 });
