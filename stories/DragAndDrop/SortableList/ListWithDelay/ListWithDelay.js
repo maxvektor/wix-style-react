@@ -5,11 +5,11 @@ import classNames from 'classnames';
 import SortableList from 'wix-style-react/SortableList';
 import defaultDndStyles from 'wix-style-react/dnd-styles';
 
-import styles from './SingleAreaList.scss';
+import styles from './ListWithDelay.scss';
 
 const generateId = () => Math.floor(Math.random() * 100000);
 
-export default class SingleAreaList extends React.Component {
+export default class ListWithDelay extends React.Component {
   static propTypes = {
     withHandle: PropTypes.bool,
   };
@@ -47,18 +47,6 @@ export default class SingleAreaList extends React.Component {
     });
   };
 
-  renderHandle({ connectHandle, id, isPlaceholder }) {
-    return connectHandle(
-      <div
-        className={styles.handle}
-        style={{ opacity: isPlaceholder ? 0 : 1 }}
-        data-hook={`card-${id}-handle`}
-      >
-        Drag Handle
-      </div>,
-    );
-  }
-
   renderItem = ({ isPlaceholder, isPreview, id, connectHandle, item }) => {
     const classes = classNames(classNames(defaultDndStyles.item, styles.item), {
       [classNames(
@@ -90,6 +78,7 @@ export default class SingleAreaList extends React.Component {
           items={this.state.items}
           renderItem={this.renderItem}
           onDrop={this.handleDrop}
+          delay={400}
         />
       </div>
     );

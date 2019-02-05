@@ -11,6 +11,7 @@ import SortableListReadmeAPI from '../../src/SortableList/API.md';
 import {
   SingleAreaList,
   SingleAreaListWithAnimation,
+  ListWithDelay,
   MultiAreaList,
   MultiAreaListWithSortableColumns,
   MultiAreaListWithSortableColumnsWithAnimations,
@@ -41,6 +42,7 @@ storiesOf('WIP/Drag And Drop/SortableList', module)
   .add('Single Area List with animations', () => (
     <SingleAreaListWithAnimation />
   ))
+  .add('List With Delay', () => <ListWithDelay />)
   .add('Multi Area List', () => <MultiAreaList />)
   .add('Multi Area List with sortable columns', () => (
     <MultiAreaListWithSortableColumns />

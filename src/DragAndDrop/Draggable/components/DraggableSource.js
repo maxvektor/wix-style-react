@@ -179,6 +179,7 @@ export default class DraggableSource extends React.Component {
       renderItem,
       id,
       item,
+      delayed,
     } = this.props;
 
     const content = withHandle
@@ -192,6 +193,7 @@ export default class DraggableSource extends React.Component {
             });
             return connectDragSource(handleWithRef);
           },
+        delayed,
         })
       : connectDragSource(
           renderItem({
@@ -199,6 +201,7 @@ export default class DraggableSource extends React.Component {
             item,
             isPlaceholder: isDragging,
             connectHandle: noop,
+            delayed,
           }),
         );
 
@@ -206,13 +209,14 @@ export default class DraggableSource extends React.Component {
   }
 
   _renderPreview = ({ previewStyles }) => {
-    const { renderItem, id, item } = this.props;
+    const { renderItem, id, item, delayed } = this.props;
     return renderItem({
       id,
       item,
       previewStyles,
       isPreview: true,
       connectHandle: noop,
+      delayed,
     });
   };
 
@@ -267,4 +271,6 @@ DraggableSource.propTypes = {
   animationTiming: PropTypes.string,
   /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
+  /** Is delay timer still waiting before user can drag the item */
+  delayed: PropTypes.bool,
 };

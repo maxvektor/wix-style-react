@@ -317,6 +317,6 @@ SortableList.propTypes = {
   animationTiming: PropTypes.string,
   /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
-
+  /** number in seconds to add delay between initial mouseDown and drag start  */
   delay: PropTypes.number,
 };

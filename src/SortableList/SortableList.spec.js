@@ -331,14 +331,17 @@ describe('SortableList', () => {
 
     it('should not initiate drag immediately if delay specified', () => {
       configureWrapperWithDelay(200);
+
+      ReactTestUtils.Simulate.mouseDown(privateDriver.getDelayWrapper());
       privateDriver.beginDrag('1');
       expect(onDragStart).not.toBeCalled();
     });
 
     it('should be able to drag after delay end', done => {
       configureWrapperWithDelay(200);
-      privateDriver.beginDrag('1');
+
       ReactTestUtils.Simulate.mouseDown(privateDriver.getDelayWrapper());
+      privateDriver.beginDrag('1');
 
       setTimeout(() => {
         privateDriver.beginDrag('1');
@@ -350,6 +353,8 @@ describe('SortableList', () => {
 
     it('should be able to drag if delay is 0', () => {
       configureWrapperWithDelay(0);
+
+      ReactTestUtils.Simulate.mouseDown(privateDriver.getDelayWrapper());
       privateDriver.beginDrag('1');
       privateDriver.endDrag();
       expect(onDragStart).toBeCalled();

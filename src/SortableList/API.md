@@ -93,12 +93,13 @@ Some details about complex props
 
   Example without handle:
   ```js
-  renderItem = ({isPlaceholder, isPreview, id, previewStyles, item}) => {
+  renderItem = ({isPlaceholder, isPreview, id, previewStyles, item, delayed}) => {
       const classes = classNames(
         styles.card,
         {
           [styles.placeholder]: isPlaceholder,
-          [styles.preview]: isPreview
+          [styles.preview]: isPreview,
+          [styles.delayed]: delayed
         });
 
       return (
