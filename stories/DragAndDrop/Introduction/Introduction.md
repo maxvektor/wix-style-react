@@ -13,14 +13,3 @@ The most useful building block you should be aware of is the `<SortableList/>` c
 ### Example
 Here is a simple usage of the `<SortableList/>` component with basic styles (Give it a try)!
 
-### Animations
-
-#### Default animation effect
-SortableList has default animation effect - visual items repositioning without changing component's state. This is just a view for future items positions.
-
-Default animation effect could be overridden by using two props:
-* `animationDuration` (0 by default, without animation) - value in ms
-* `animationTiming` ('' by default) - timing function for an animation, could be any value which will be accepted by `animation-timing-function` at CSS
-
-#### Custom animation effects
-Currently there is no possibility to add custom animations.
