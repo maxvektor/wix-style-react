@@ -297,6 +297,64 @@ describe('SortableList', () => {
       removedIndex: 0,
     });
   });
+
+  describe('with delay prop', () => {
+    let privateDriver, onDragStart, onDragEnd;
+    const items = [{ id: '1', text: 'item 1' }, { id: '2', text: 'item 2' }];
+    const renderItem = ({ item }) => <div>{item.text}</div>; // eslint-disable-line react/prop-types
+
+    const configureWrapperWithDelay = delay => {
+      const wrapper = ReactTestUtils.renderIntoDocument(
+        <DragDropContextProvider backend={TestBackend}>
+          <SortableList
+            containerId="sortable-list"
+            groupName="group"
+            items={items}
+            renderItem={renderItem}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            delay={delay}
+          />
+        </DragDropContextProvider>,
+      );
+
+      privateDriver = privateSortableListDriver({
+        wrapper,
+        element: ReactDOM.findDOMNode(wrapper),
+      });
+    };
+
+    beforeEach(() => {
+      onDragStart = jest.fn();
+      onDragEnd = jest.fn();
+    });
+
+    it('should not initiate drag immediately if delay specified', () => {
+      configureWrapperWithDelay(200);
+      privateDriver.beginDrag('1');
+      expect(onDragStart).not.toBeCalled();
+    });
+
+    it('should be able to drag after delay end', done => {
+      configureWrapperWithDelay(200);
+      privateDriver.beginDrag('1');
+      ReactTestUtils.Simulate.mouseDown(privateDriver.getDelayWrapper());
+
+      setTimeout(() => {
+        privateDriver.beginDrag('1');
+        privateDriver.endDrag();
+        expect(onDragStart).toBeCalled();
+        done();
+      }, 210);
+    });
+
+    it('should be able to drag if delay is 0', () => {
+      configureWrapperWithDelay(0);
+      privateDriver.beginDrag('1');
+      privateDriver.endDrag();
+      expect(onDragStart).toBeCalled();
+    });
+  });
 });
 
 describe('Enzyme: SortableList', () => {

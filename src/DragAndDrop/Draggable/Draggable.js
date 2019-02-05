@@ -68,7 +68,7 @@ export class Draggable extends WixComponent {
     const {hasDragged, ...restProps} = this.props;
     return (
       <DraggableTarget {...restProps}>
-        <div onMouseDown={this.countDelay}>
+        <div onMouseDown={this.countDelay} data-hook="delay-wrapper">
           <DraggableSource
             {...restProps}
             ignoreMouseEvents={hasDragged}
