@@ -6,9 +6,7 @@ import DraggableSource from './components/DraggableSource';
 import DraggableTarget from './components/DraggableTarget';
 
 export class Draggable extends WixComponent {
-  state = {
-    delayed: true
-  };
+  state = {delayed: true};
   delayTimer = null;
 
   componentWillUnmount() {
@@ -16,8 +14,10 @@ export class Draggable extends WixComponent {
   }
 
   resetDelayState = () => {
-    this.setState({delayed: true});
-    this.resetDelayTimer();
+    if (!!this.props.delay) {
+      this.setState({delayed: true});
+      this.resetDelayTimer();
+    }
   };
 
   resetDelayTimer = () => {
@@ -27,6 +27,8 @@ export class Draggable extends WixComponent {
 
   countDelay = () => {
     if (!!this.props.delay) {
+      this.resetDelayState();
+
       this.delayTimer = setTimeout(() => this.setState({delayed: false}), this.props.delay);
     }
   };
@@ -66,11 +68,7 @@ export class Draggable extends WixComponent {
     const {hasDragged, ...restProps} = this.props;
     return (
       <DraggableTarget {...restProps}>
-        <div
-          onMouseDown={this.countDelay}
-          onMouseUp={this.resetDelayState}
-          onMouseMove={this.resetDelayTimer}
-        >
+        <div onMouseDown={this.countDelay}>
           <DraggableSource
             {...restProps}
             ignoreMouseEvents={hasDragged}
