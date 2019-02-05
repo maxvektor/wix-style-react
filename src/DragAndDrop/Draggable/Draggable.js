@@ -6,11 +6,79 @@ import DraggableSource from './components/DraggableSource';
 import DraggableTarget from './components/DraggableTarget';
 
 export class Draggable extends WixComponent {
+  state = {
+    delayed: true
+  };
+  delayTimer = null;
+
+  componentWillUnmount() {
+    this.resetDelayTimer();
+  }
+
+  resetDelayState = () => {
+    this.setState({delayed: true});
+    this.resetDelayTimer();
+  };
+
+  resetDelayTimer = () => {
+    clearTimeout(this.delayTimer);
+    this.delayTimer = null;
+  };
+
+  countDelay = () => {
+    if (!!this.props.delay) {
+      this.delayTimer = setTimeout(() => this.setState({delayed: false}), this.props.delay);
+    }
+  };
+
+  onDragStart = ({id, index, containerId, groupName, item}) => {
+    if (this.props.onDragStart) {
+      this.props.onDragStart({id, index, containerId, groupName, item});
+    }
+
+    this.resetDelayTimer();
+  };
+
+  onDragEnd = ({id, index, containerId, groupName, item}) => {
+    if (this.props.onDragEnd) {
+      this.props.onDragEnd({id, index, containerId, groupName, item});
+    }
+
+    this.resetDelayState();
+  };
+
+  canDrag = ({id, index, containerId, groupName, item, canDrag}) => {
+    const canDragByDelay = !!this.props.delay ? !this.state.delayed : true;
+    const propsCanDrag = this.props.canDrag
+      ? this.props.canDrag({
+          id,
+          index,
+          containerId,
+          groupName,
+          item
+        })
+      : true;
+
+    return canDragByDelay && propsCanDrag;
+  };
+
   render() {
-    const { hasDragged, ...restProps } = this.props;
+    const {hasDragged, ...restProps} = this.props;
     return (
       <DraggableTarget {...restProps}>
-        <DraggableSource {...restProps} ignoreMouseEvents={hasDragged} />
+        <div
+          onMouseDown={this.countDelay}
+          onMouseUp={this.resetDelayState}
+          onMouseMove={this.resetDelayTimer}
+        >
+          <DraggableSource
+            {...restProps}
+            ignoreMouseEvents={hasDragged}
+            onDragStart={this.onDragStart}
+            onDragEnd={this.onDragEnd}
+            canDrag={this.canDrag}
+          />
+        </div>
       </DraggableTarget>
     );
   }
@@ -54,6 +122,8 @@ Draggable.propTypes = {
   animationTiming: PropTypes.string,
   /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
+
+  delay: PropTypes.number
 };
 
 export default Draggable;

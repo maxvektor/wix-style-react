@@ -279,6 +279,7 @@ export default class SortableList extends WixComponent {
                 onDragStart={this.handleDragStart}
                 onDragEnd={this.handleDragEnd}
                 canDrag={this.props.canDrag}
+                delay={this.props.delay}
               />
             ))}
           </div>
@@ -316,4 +317,6 @@ SortableList.propTypes = {
   animationTiming: PropTypes.string,
   /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
+
+  delay: PropTypes.number,
 };

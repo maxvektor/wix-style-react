@@ -90,6 +90,7 @@ export default class SingleAreaList extends React.Component {
           items={this.state.items}
           renderItem={this.renderItem}
           onDrop={this.handleDrop}
+          delay={300}
         />
       </div>
     );
