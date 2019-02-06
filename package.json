@@ -156,7 +156,7 @@
     "rc-slider": "^8.0.2",
     "react-collapse": "^4.0.3",
     "react-day-picker": "^7.0.7",
-    "react-dnd": "^2.5.1",
+    "react-dnd": "^3.0.2",
     "react-dnd-html5-backend": "^5.0.1",
     "react-modal": "^3.3.2",
     "react-motion": "^0.4.7",
