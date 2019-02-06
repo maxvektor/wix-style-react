@@ -17,6 +17,31 @@ import privateSortableListDriver from './SortableList.driver.private';
 import SortableList from './SortableList';
 
 describe('SortableList', () => {
+  const defaultProps = {
+    contentClassName: 'cl',
+    dataHook: 'sortable-list',
+    containerId: 'sortable-list',
+    groupName: 'group',
+    items: [{ id: '1', text: 'item 1' }, { id: '2', text: 'item 2' }],
+    renderItem: ({ item }) => <div>{item.text}</div>,
+  };
+
+  const configureWrapper = props => {
+    const elemProps = { ...defaultProps, ...props };
+    return ReactTestUtils.renderIntoDocument(
+      <DragDropContextProvider backend={TestBackend}>
+        <SortableList {...elemProps} />
+      </DragDropContextProvider>,
+    );
+  };
+
+  const createDriver = wrapper => {
+    return privateSortableListDriver({
+      wrapper,
+      element: ReactDOM.findDOMNode(wrapper),
+    });
+  };
+
   it('should exists', () => {
     const dataHook = 'sortable-list';
     const items = [{ id: '1', text: 'item 1' }, { id: '2', text: 'item 2' }];
@@ -296,6 +321,19 @@ describe('SortableList', () => {
       removedFromContainerId: 'sortable-list',
       removedIndex: 0,
     });
+  });
+
+  it('should not call onDragStart if canDrag prop is false', () => {
+    const props = {
+      onDragStart: jest.fn(),
+      onDragEnd: jest.fn(),
+      canDrag: () => false,
+    };
+    const wrapper = configureWrapper(props);
+    const driver = createDriver(wrapper);
+
+    driver.beginDrag('1');
+    expect(props.onDragStart).not.toBeCalled();
   });
 
   describe('with delay prop', () => {
