@@ -16,11 +16,17 @@ const generateBreadcrumbs = title => (
   />
 );
 
+const ActionBar = props => props.children;
+
 describe('PageHeader', () => {
   const title = 'This is a title';
   const subtitle = 'This is a subtitle';
   const breadcrumbs = generateBreadcrumbs(title);
-  const actionsBar = <Button>Action</Button>;
+  const actionsBar = (
+    <ActionBar>
+      <Button>Action</Button>
+    </ActionBar>
+  );
   const onBackClicked = () => {};
   const render = createRendererWithDriver(pageHeaderDriverFactory);
   const createDriver = jsx => render(jsx).driver;
