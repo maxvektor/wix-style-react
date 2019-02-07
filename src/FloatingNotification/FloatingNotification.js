@@ -5,21 +5,21 @@ import Text from '../Text';
 import TextButton from '../TextButton';
 import Button from '../Button';
 import CloseButton from '../CloseButton/CloseButton';
+import { NOTIFICATION_TYPES } from './constants';
+import {
+  BUTTON_DATA_HOOK,
+  TEXT_BUTTON_DATA_HOOK,
+  TEXT_DATA_HOOK,
+  CLOSE_BUTTON_DATA_HOOK,
+} from './datahooks.js';
 import styles from './FloatingNotification.scss';
 
-const DATA_HOOK_PREFIX = 'floating-notification';
-export const BUTTON_DATA_HOOK = `${DATA_HOOK_PREFIX}-button`;
-export const TEXT_BUTTON_DATA_HOOK = `${DATA_HOOK_PREFIX}-text-button`;
-export const TEXT_DATA_HOOK = `${DATA_HOOK_PREFIX}-text`;
-export const CLOSE_BUTTON_DATA_HOOK = `${DATA_HOOK_PREFIX}-close-button`;
-
-export const NOTIFICATION_TYPES = {
-  STANDARD: 'standard',
-  SUCCESS: 'success',
-  DESTRUCTIVE: 'destructive',
-  WARNING: 'warning',
-  PREMIUM: 'premium',
-};
+const buttonProps = PropTypes.shape({
+  label: PropTypes.string,
+  as: PropTypes.node,
+  href: PropTypes.string,
+  onClick: PropTypes.func,
+});
 
 /**
  * Displays simple and temporary messages or destructive events
@@ -44,13 +44,13 @@ class FloatingNotification extends React.PureComponent {
     showTextButton: PropTypes.bool,
 
     /** props to pass to textButton */
-    textButtonProps: PropTypes.object,
+    textButtonProps: buttonProps,
 
     /** boolean to enable/disable button to appear after content */
     showButton: PropTypes.bool,
 
     /** props to pass to button */
-    buttonProps: PropTypes.object,
+    buttonProps: buttonProps,
 
     /** An icon element to appear before content */
     prefixIcon: PropTypes.element,
@@ -77,7 +77,6 @@ class FloatingNotification extends React.PureComponent {
     return (
       <div
         data-hook={dataHook}
-        data-notification-type={type}
         className={classNames(styles.root, styles[type], className)}
       >
         {icon}
@@ -111,9 +110,7 @@ class FloatingNotification extends React.PureComponent {
 
   _getTextButton() {
     const { showTextButton, textButtonProps } = this.props;
-    const textButtonText = textButtonProps.label;
-    const props = { ...textButtonProps };
-    delete props.label;
+    const { label, as, href, onClick } = textButtonProps;
 
     return showTextButton ? (
       <TextButton
@@ -122,18 +119,18 @@ class FloatingNotification extends React.PureComponent {
         size={'small'}
         className={styles.textButton}
         dataHook={TEXT_BUTTON_DATA_HOOK}
-        {...props}
+        as={as}
+        href={href}
+        onClick={onClick}
       >
-        {textButtonText}
+        {label}
       </TextButton>
     ) : null;
   }
 
   _getButton() {
     const { showButton, buttonProps } = this.props;
-    const buttonText = buttonProps.label;
-    const props = { ...buttonProps };
-    delete props.label;
+    const { label, as, href, onClick } = buttonProps;
 
     return showButton ? (
       <Button
@@ -142,10 +139,11 @@ class FloatingNotification extends React.PureComponent {
         priority={'secondary'}
         skin={'dark'}
         dataHook={BUTTON_DATA_HOOK}
-        {...props}
-        upgrade
+        as={as}
+        href={href}
+        onClick={onClick}
       >
-        {buttonText}
+        {label}
       </Button>
     ) : null;
   }

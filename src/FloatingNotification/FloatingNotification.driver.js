@@ -4,7 +4,7 @@ import {
   TEXT_BUTTON_DATA_HOOK,
   TEXT_DATA_HOOK,
   CLOSE_BUTTON_DATA_HOOK,
-} from './FloatingNotification';
+} from './datahooks';
 
 export const floatingNotificationDriverFactory = base => {
   return {
@@ -32,5 +32,21 @@ export const floatingNotificationDriverFactory = base => {
 
     /** get notification text */
     getText: async () => base.$(`[data-hook="${TEXT_DATA_HOOK}"]`).text(),
+
+    /** get button tag name */
+    isButtonAs: async as =>
+      await base.$(`${as}[data-hook="${BUTTON_DATA_HOOK}"]`).exists(),
+
+    /** get button href */
+    getButtonHref: async () =>
+      base.$(`[data-hook="${BUTTON_DATA_HOOK}"]`).attr('href'),
+
+    /** get text button tag name */
+    isTextButtonAs: async as =>
+      await base.$(`${as}[data-hook="${TEXT_BUTTON_DATA_HOOK}"]`).exists(),
+
+    /** get button href */
+    getTextButtonHref: async () =>
+      base.$(`[data-hook="${TEXT_BUTTON_DATA_HOOK}"]`).attr('href'),
   };
 };

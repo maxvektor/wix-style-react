@@ -12,8 +12,7 @@ describe('FloatingNotification', () => {
     floatingNotificationPrivateDriverFactory,
   );
 
-  const createDriver = props =>
-    render(<FloatingNotification {...props} />).driver;
+  const createDriver = props => render(<FloatingNotification {...props} />);
 
   afterEach(() => {
     someButtonOnClick.mockRestore();
@@ -21,7 +20,7 @@ describe('FloatingNotification', () => {
   });
 
   it('should render text', async () => {
-    const driver = createDriver({
+    const { driver } = createDriver({
       text: someText,
     });
 
@@ -29,7 +28,7 @@ describe('FloatingNotification', () => {
   });
 
   it('should allow rendering button', async () => {
-    const driver = createDriver({
+    const { driver } = createDriver({
       showButton: true,
       buttonProps: {
         label: someButtonLabel,
@@ -43,7 +42,7 @@ describe('FloatingNotification', () => {
   });
 
   it('should allow rendering text button', async () => {
-    const driver = createDriver({
+    const { driver } = createDriver({
       showTextButton: true,
       textButtonProps: {
         label: someButtonLabel,
@@ -54,5 +53,45 @@ describe('FloatingNotification', () => {
     expect(await driver.getTextButtonLabel()).toEqual(someButtonLabel);
     await driver.clickTextButton();
     expect(someButtonOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render prefixIcon when one is given', () => {
+    const { getByText } = createDriver({
+      prefixIcon: <div>HELLO PREFIX ICON</div>,
+    });
+
+    expect(getByText('HELLO PREFIX ICON')).toBeTruthy();
+  });
+
+  it('should accept "as" and "href" attributes for button', async () => {
+    const someAs = 'a';
+    const someHref = 'someHref';
+    const { driver } = createDriver({
+      showButton: true,
+      buttonProps: {
+        label: someButtonLabel,
+        as: someAs,
+        href: someHref,
+      },
+    });
+
+    expect(await driver.isButtonAs(someAs)).toEqual(true);
+    expect(await driver.getButtonHref()).toEqual(someHref);
+  });
+
+  it('should accept "as" and "href" attributes for text button', async () => {
+    const someAs = 'a';
+    const someHref = 'someHref';
+    const { driver } = createDriver({
+      showTextButton: true,
+      textButtonProps: {
+        label: someButtonLabel,
+        as: someAs,
+        href: someHref,
+      },
+    });
+
+    expect(await driver.isTextButtonAs(someAs)).toEqual(true);
+    expect(await driver.getTextButtonHref()).toEqual(someHref);
   });
 });

@@ -14,10 +14,6 @@
   min-width: 395px;
   box-sizing: border-box;
 
-  * {
-    box-sizing: border-box;
-  }
-
   .icon {
     height: 100%;
     display: flex;
@@ -40,11 +36,7 @@
   }
 
   .close {
-    height: 100%;
-    display: flex;
     flex-shrink: 0;
-    align-items: center;
-    cursor: pointer;
   }
 
   &.standard {
@@ -63,7 +55,7 @@
   }
 
   &.warning {
-    background-color: $Y50;
+    background-color: $Y60;
     border-color: $Y05;
   }
 

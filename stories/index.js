@@ -161,6 +161,7 @@ import './EditableSelector/testStory';
 import './Slider/testStory'; // 4.7 Slider
 import './StatsWidget/testStory'; // 2.7 StatsWidget
 import './SegmentedToggle/testStory'; // 4.5 SegmentedToggle
+import './FloatingNotification/testStory'; // 8.2 FloatingNotification
 
 // The generated test component
 import './GeneratedTestComponent/index.story';
