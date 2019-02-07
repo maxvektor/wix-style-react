@@ -37,6 +37,19 @@ describe('RichTextInputArea', () => {
     await createDriver();
   });
 
+  eyes.it(
+    `should change the text area's background color on hover`,
+    async () => {
+      const driver = await createDriver();
+      await driver.hoverTextArea();
+    },
+  );
+
+  eyes.it(`should change the text area's border on click`, async () => {
+    const driver = await createDriver();
+    await driver.clickTextArea();
+  });
+
   eyes.it('should render live example', async () => {
     await createDriver('story-rich-text-input-area-live-example');
   });

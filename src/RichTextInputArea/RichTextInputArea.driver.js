@@ -2,13 +2,17 @@ import { baseUniDriverFactory } from 'wix-ui-test-utils/base-driver';
 import ReactTestUtils from 'react-dom/test-utils';
 
 export const richTextInputAreaDriverFactory = base => {
+  const getTextArea = () => base.$('.public-DraftEditor-content');
+
   return {
     ...baseUniDriverFactory(base),
-    getContent: async () => base.text(),
+    getContent: () => base.text(),
+    hoverTextArea: async () => await getTextArea().hover(),
+    clickTextArea: async () => await getTextArea().click(),
     enterText: async text => {
       if (base.type === 'react') {
-        const editor = await base.$('.public-DraftEditor-content').getNative();
-        ReactTestUtils.Simulate.beforeInput(editor, { data: text });
+        const textAreaNative = await getTextArea().getNative();
+        ReactTestUtils.Simulate.beforeInput(textAreaNative, { data: text });
       }
     },
   };
