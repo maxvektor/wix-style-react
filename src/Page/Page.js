@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { ResizeSensor } from 'css-element-queries';
@@ -19,7 +21,7 @@ import {
   mainContainerMaxWidthPx as GRID_MAX_WIDTH,
 } from '../Grid/constants';
 import deprecationLog from '../utils/deprecationLog';
-
+import { StickyContainer, Sticky } from 'react-sticky';
 /*
  * Page structure is as follows:
  *
@@ -171,10 +173,24 @@ class Page extends WixComponent {
       : SCROLL_TOP_THRESHOLD;
   }
 
-  _setScrollContainer(scrollContainer) {
-    this.scrollableContentRef = scrollContainer;
+  _setScrollContainer(scrollableContainerInstance) {
+    this.scrollableContentRef = ReactDOM.findDOMNode(
+      scrollableContainerInstance,
+    );
+    if (!this.stickyContainerInstance) {
+      // this.stickyContainerInstance is not really used, we just use it as a flag so we subscribe only once
+      this.stickyContainerInstance = scrollableContainerInstance;
+      this.stickyContainerInstance.subscribe(obj =>
+        this._handleStickyContainerEvent(obj),
+      );
+    }
     this.props.scrollableContentRef &&
-      this.props.scrollableContentRef(scrollContainer);
+      this.props.scrollableContentRef(scrollableContainerInstance);
+  }
+
+  _handleStickyContainerEvent(obj) {
+    // TODO: This handle all sort of events, need to react to `onScroll` only
+    this._handleScroll(obj.eventSource);
   }
 
   _getScrollContainer() {
@@ -185,8 +201,7 @@ class Page extends WixComponent {
     return containerScrollTop > this.containerScrollTopThreshold;
   }
 
-  _handleScroll() {
-    const scrollContainer = this._getScrollContainer();
+  _handleScroll(scrollContainer) {
     const containerScrollTop = scrollContainer.scrollTop;
     const nextMinimized = this._shouldBeMinimized(containerScrollTop);
     const { minimized, isStickyFixedContent } = this.state;
@@ -393,9 +408,8 @@ class Page extends WixComponent {
     } = this._calculateHeaderMeasurements();
 
     return (
-      <div
+      <StickyContainer
         className={s.scrollableContainer}
-        onScroll={this._handleScroll}
         data-hook="page-scrollable-content"
         data-class="page-scrollable-content"
         style={{ paddingTop: `${headerContainerHeight}px` }}
@@ -406,7 +420,7 @@ class Page extends WixComponent {
           imageHeight,
         })}
         {this._renderContent()}
-      </div>
+      </StickyContainer>
     );
   }
   _renderScrollableBackground({ gradientHeight, imageHeight }) {
