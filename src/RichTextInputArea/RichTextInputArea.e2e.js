@@ -37,6 +37,11 @@ describe('RichTextInputArea', () => {
     await createDriver();
   });
 
+  eyes.it('should enter simple text', async () => {
+    const driver = await createDriver();
+    await driver.enterText('This is a rich text area');
+  });
+
   eyes.it(
     `should change the text area's background color on hover`,
     async () => {
@@ -50,7 +55,7 @@ describe('RichTextInputArea', () => {
     await driver.clickTextArea();
   });
 
-  eyes.it('should render live example', async () => {
+  eyes.it('should render with rich text', async () => {
     await createDriver('story-rich-text-input-area-live-example');
   });
 });
