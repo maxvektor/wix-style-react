@@ -22,6 +22,7 @@ import {
 } from '../Grid/constants';
 import deprecationLog from '../utils/deprecationLog';
 import { StickyContainer, Sticky } from 'react-sticky';
+
 /*
  * Page structure is as follows:
  *
@@ -80,11 +81,11 @@ class Page extends WixComponent {
     this._handleScroll = this._handleScroll.bind(this);
     this._handleWidthResize = this._handleWidthResize.bind(this);
     this._handleWindowResize = this._handleWindowResize.bind(this);
+    this._renderFixedContent = this._renderFixedContent.bind(this);
 
     this.state = {
       headerContainerHeight: 0,
       tailHeight: 0,
-      fixedContentHeight: 0,
       scrollBarWidth: 0,
       minimized: false,
       minimizedHeaderContainerHeight: null,
@@ -121,32 +122,22 @@ class Page extends WixComponent {
   }
 
   _calculateComponentsHeights() {
-    const {
-      headerContainerHeight,
-      tailHeight,
-      fixedContentHeight,
-      pageHeight,
-    } = this.state;
+    const { headerContainerHeight, tailHeight, pageHeight } = this.state;
     const newHeaderContainerHeight = this.headerContainerRef
       ? this.headerContainerRef.offsetHeight
       : 0;
     const newTailHeight = this.pageHeaderTailRef
       ? this.pageHeaderTailRef.offsetHeight
       : 0;
-    const newFixedContentHeight = this.fixedContentRef
-      ? this.fixedContentRef.offsetHeight
-      : 0;
     const newPageHeight = this.pageRef ? this.pageRef.offsetHeight : 0;
     if (
       headerContainerHeight !== newHeaderContainerHeight ||
       tailHeight !== newTailHeight ||
-      fixedContentHeight !== newFixedContentHeight ||
       pageHeight !== newPageHeight
     ) {
       this.setState({
         headerContainerHeight: newHeaderContainerHeight,
         tailHeight: newTailHeight,
-        fixedContentHeight: newFixedContentHeight,
         pageHeight: newPageHeight,
       });
     }
@@ -211,10 +202,11 @@ class Page extends WixComponent {
       minimizedHeaderContainerHeight,
     } = this._calculateMinimizedHeaderMeasurements();
 
+    // TODO: can we take it from <Sticky/> renderProps isSticky? Whithout change Page state during render (which issues a React warning)
     const nextIsStickyFixedContent =
       minimizedHeaderContainerHeight === null
         ? false
-        : containerScrollTop > minimizedDiff;
+        : containerScrollTop >= minimizedDiff;
 
     if (
       minimized !== nextMinimized ||
@@ -289,11 +281,7 @@ class Page extends WixComponent {
 
     const { gradientCoverTail } = this.props;
     // headerContainerHeight (and other heights) are calculated only when the Page is NOT minimized
-    const {
-      headerContainerHeight,
-      tailHeight,
-      fixedContentHeight,
-    } = this.state;
+    const { headerContainerHeight, tailHeight } = this.state;
 
     const imageHeight = `${headerContainerHeight +
       (PageTail ? -tailHeight : 39)}px`;
@@ -304,7 +292,6 @@ class Page extends WixComponent {
     return {
       imageHeight,
       gradientHeight,
-      fixedContentHeight,
       headerContainerHeight,
     };
   }
@@ -393,9 +380,11 @@ class Page extends WixComponent {
             </div>
           )}
         </div>
-        <div {...this._getContentHorizontalLayoutProps()}>
-          {isStickyFixedContent && this._renderFixedContent()}
-        </div>
+        {isStickyFixedContent && (
+          <div {...this._getContentHorizontalLayoutProps()}>
+            {this._renderFixedContent({})}
+          </div>
+        )}
       </div>
     );
   }
@@ -450,7 +439,7 @@ class Page extends WixComponent {
     }
   }
 
-  _renderFixedContent() {
+  _renderFixedContent({ style } = {}) {
     const { children } = this.props;
     const childrenObject = getChildrenObject(children);
     const { PageFixedContent } = childrenObject;
@@ -460,11 +449,51 @@ class Page extends WixComponent {
         <div
           data-hook="page-fixed-content"
           className={classNames(s.fixedContent, s.contentFloating)}
-          ref={r => (this.fixedContentRef = r)}
+          style={style}
         >
           {React.cloneElement(PageFixedContent)}
         </div>
       )
+    );
+  }
+
+  _renderStickyContent() {
+    const { children } = this.props;
+    const childrenObject = getChildrenObject(children);
+    const { PageFixedContent } = childrenObject;
+
+    if (!PageFixedContent) {
+      return null;
+    }
+
+    const {
+      minimizedDiff,
+      minimizedHeaderContainerHeight,
+    } = this._calculateMinimizedHeaderMeasurements();
+
+    const ARBITRARY_LARGE = 1000;
+    return (
+      <Sticky
+        relative
+        topOffset={
+          minimizedHeaderContainerHeight === null
+            ? ARBITRARY_LARGE
+            : minimizedDiff
+        }
+      >
+        {({ isSticky, style }) => {
+          //TODO: fix warning: Make this a separate state from Page. e.g. FixedHeaderComponent's state
+          // if (this.state.isStickyFixedContent !== isSticky) {
+          //   this.setState({
+          //     isStickyFixedContent: isSticky,
+          //   });
+          // }
+
+          return this._renderFixedContent({
+            style: { ...style, visibility: isSticky ? 'hidden' : undefined },
+          });
+        }}
+      </Sticky>
     );
   }
   _renderContent() {
@@ -472,13 +501,10 @@ class Page extends WixComponent {
     const childrenObject = getChildrenObject(children);
     const { PageContent } = childrenObject;
 
-    const {
-      fixedContentHeight,
-      headerContainerHeight,
-    } = this._calculateHeaderMeasurements();
+    const { headerContainerHeight } = this._calculateHeaderMeasurements();
     // console.log('minimizedDiff= ', minimizedDiff);
 
-    const { pageHeight, minimized, isStickyFixedContent } = this.state;
+    const { pageHeight, minimized } = this.state;
     const minHeightOffset = minimized
       ? this._calculateMinimizedHeaderMeasurements().minimizedDiff
       : 0;
@@ -486,6 +512,7 @@ class Page extends WixComponent {
     const contentHorizontalLayoutProps = this._getContentHorizontalLayoutProps();
     const stretchToHeight =
       pageHeight - headerContainerHeight - PAGE_BOTTOM_PADDING_PX;
+
     return (
       <div
         className={classNames(contentHorizontalLayoutProps.className, {
@@ -494,9 +521,6 @@ class Page extends WixComponent {
         style={{
           ...contentHorizontalLayoutProps.style,
           minHeight: `calc(100% - ${PAGE_BOTTOM_PADDING_PX}px + ${minHeightOffset}px`,
-          paddingTop: `${
-            this.state.isStickyFixedContent ? fixedContentHeight : 0
-          }px`,
         }}
       >
         <div
@@ -505,7 +529,7 @@ class Page extends WixComponent {
           }}
           className={s.contentFloating}
         >
-          {!isStickyFixedContent && this._renderFixedContent()}
+          {this._renderStickyContent()}
           {this._safeGetChildren(PageContent)}
         </div>
       </div>
