@@ -356,7 +356,6 @@ class Page extends WixComponent {
         <div
           className={classNames(s.pageHeaderContainer, {
             [s.minimized]: minimized,
-            [s.withoutBottomPadding]: PageTail && minimized,
           })}
           data-minimized={minimized}
           ref={ref => (this.headerContainerRef = ref)}
