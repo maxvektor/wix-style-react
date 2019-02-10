@@ -29,12 +29,7 @@ export default {
       <LiveCodeExample
         compact
         title="Live code example"
-        initialCode={`
-<RichTextInputArea
-  dataHook="story-rich-text-input-area-live-example"
-  value="${ExampleRichTextInputArea}"
-  />
-        `}
+        initialCode={ExampleRichTextInputArea}
       />
     </div>
   ),
