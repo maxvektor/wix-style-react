@@ -38,7 +38,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
 
 
 
-.fixed-container {
+.fixedContainer {
   position: absolute;
   z-index: 2;
   min-height: 30px;
@@ -48,7 +48,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   width: 100%;
 }
 
-.page-header-container {
+.pageHeaderContainer {
   padding-top: 30px;
   padding-bottom: $scroll-top-threshold;
   
@@ -59,7 +59,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   }
 }
 
-.page-header {
+.pageHeader {
   padding: 0 $page-side-padding;
   margin: 0 auto;
 }
@@ -87,7 +87,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   
 }
 
-.image-background {
+.imageBackground {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -99,7 +99,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   filter: blur(12px);
 }
 
-.image-background-container {
+.imageBackgroundContainer {
   position: absolute;
   overflow: hidden;
   top: 0;
@@ -116,7 +116,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   }
 }
 
-.gradient-background {
+.gradientBackground {
   position: absolute;
   top: 0;
   width: 100%;
@@ -136,16 +136,16 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
   box-sizing: content-box; 
 }
 
-.content-placeholder {
+.contentPlaceholder {
   flex-shrink: 0;
   width: 100%;
 }
 
-.content-full-width {
+.contentFullWidth {
   padding-left: 0;
   padding-right: 0;
 }
 
-.stretch-vertically {
+.stretchVertically {
   height: 100%;
 }
