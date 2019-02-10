@@ -10,9 +10,12 @@ export const richTextInputAreaDriverFactory = base => {
     hoverTextArea: async () => await getTextArea().hover(),
     clickTextArea: async () => await getTextArea().click(),
     enterText: async text => {
+      const textAreaNative = await getTextArea().getNative();
+
       if (base.type === 'react') {
-        const textAreaNative = await getTextArea().getNative();
         ReactTestUtils.Simulate.beforeInput(textAreaNative, { data: text });
+      } else if (base.type === 'protractor') {
+        textAreaNative.sendKeys(text);
       }
     },
   };
