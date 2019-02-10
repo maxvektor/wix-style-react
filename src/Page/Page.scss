@@ -49,6 +49,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
 }
 
 .pageHeaderContainer {
+  position: relative;
   padding-top: 30px;
   padding-bottom: $scroll-top-threshold;
   

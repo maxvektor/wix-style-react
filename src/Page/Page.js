@@ -21,7 +21,7 @@ import {
   mainContainerMaxWidthPx as GRID_MAX_WIDTH,
 } from '../Grid/constants';
 import deprecationLog from '../utils/deprecationLog';
-import { StickyContainer, Sticky } from 'react-sticky';
+import { StickyContainer, Sticky } from './Sticky';
 
 /*
  * Page structure is as follows:
@@ -369,11 +369,10 @@ class Page extends WixComponent {
         data-class="page-scrollable-content"
         ref={r => this._setScrollContainer(r)}
       >
-        {this._renderFixedContainer()}
-        {/* {this._renderScrollableBackground({
+        {this._renderScrollableBackground({
           gradientHeight,
           imageHeight,
-        })} */}
+        })}
         {this._renderHeader({ minimized: false })}
         {this._renderContent()}
       </StickyContainer>
@@ -444,13 +443,14 @@ class Page extends WixComponent {
 
     return (
       <Sticky
-        topOffset={
-          minimizedHeaderContainerHeight === null
-            ? 0
-            : -(headerContainerHeight - minimizedHeaderContainerHeight)
-        }
+        relative
+        // topOffset={
+        //   minimizedHeaderContainerHeight === null
+        //     ? 0
+        //     : -(headerContainerHeight - minimizedHeaderContainerHeight)
+        // }
       >
-        {({ style, isSticky, distanceFromTop }) => {
+        {({ style }) => {
           return this._renderFixedContent({
             style: {
               ...style,
@@ -489,9 +489,10 @@ class Page extends WixComponent {
           style={{
             minHeight: `${stretchToHeight}px`,
           }}
-          // className={s.contentFloating}
+          className={s.contentFloating}
         >
-          {this._renderStickyContent()}
+          {/* {this._renderStickyContent()} */}
+          {this._renderFixedContent()}
           {this._safeGetChildren(PageContent)}
         </div>
       </div>
@@ -521,6 +522,7 @@ class Page extends WixComponent {
           }}
           ref={ref => (this.pageRef = ref)}
         >
+          {this._renderFixedContainer()}
           {this._renderScrollableContainer()}
         </div>
       </div>
