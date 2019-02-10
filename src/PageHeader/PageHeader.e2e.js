@@ -23,17 +23,17 @@ describe('PageHeader', () => {
     return driver;
   };
 
-  eyes.it('should disaply standard header', async () => {
+  eyes.it('should display standard header', async () => {
     await initTest({ testName: '1. Standard', rtl: true });
   });
 
   describe('Ellipsis', () => {
-    eyes.it('should disaply title and subtitle with ellipsis', async () => {
+    eyes.it('should display title and subtitle with ellipsis', async () => {
       await initTest({ testName: '2. Long Title and Subtitle' });
     });
 
     eyes.it(
-      'should disaply an opened dropdown in title (no ellipsis)',
+      'should display an opened dropdown in title (no ellipsis)',
       async () => {
         await initTest({ testName: '3. Title with Dropdown' });
         const dropdownTeskit = dropdownTestkitFactory({
@@ -44,7 +44,7 @@ describe('PageHeader', () => {
     );
 
     eyes.it(
-      'should disaply an opened dropdown in subtitle (no ellipsis)',
+      'should display an opened dropdown in subtitle (no ellipsis)',
       async () => {
         await initTest({ testName: '4. Subtitle with Dropdown' });
         const dropdownTeskit = dropdownTestkitFactory({
@@ -56,7 +56,7 @@ describe('PageHeader', () => {
   });
 
   describe('RTL', () => {
-    eyes.it('should disaply standard header', async () => {
+    eyes.it('should display standard header', async () => {
       await initTest({ testName: '1. Standard', rtl: true });
     });
   });
