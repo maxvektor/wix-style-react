@@ -3,6 +3,7 @@ import { storySettings } from './storySettings';
 import LiveCodeExample from '../utils/Components/LiveCodeExample';
 
 import RichTextInputArea from '../../src/RichTextInputArea';
+import ExampleRichTextInputArea from './examples/ExampleRichTextInputArea';
 
 export default {
   category: storySettings.kind,
@@ -31,6 +32,7 @@ export default {
         initialCode={`
 <RichTextInputArea
   dataHook="story-rich-text-input-area-live-example"
+  value="${ExampleRichTextInputArea}"
   />
         `}
       />
