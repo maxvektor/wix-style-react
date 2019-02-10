@@ -6,7 +6,7 @@
   min-width: 0;
 }
 
-.header-container {
+.headerContainer {
   display: flex;
   justify-content: flex-start;
   flex-direction: row;
@@ -16,7 +16,7 @@
     flex: 1;
     @include truncatedFlexChild;
 
-    .breadcrumbs-container {
+    .breadcrumbsContainer {
       margin-left: -10px;
     
       &.absolute {
@@ -24,14 +24,14 @@
       }
     }
     
-    .title-container {
+    .titleContainer {
       display: flex;
     
       &.minimized {
         position: absolute;
       }
     
-      .back-button {
+      .backButton {
         position: relative;
         top: 6px;
         left: -12px;
@@ -55,7 +55,7 @@
           }
         }
       
-        &.dark-theme {
+        &.darkTheme {
           button {
             color: $D80;
       
@@ -65,7 +65,7 @@
           }
         }
 
-        .back-button-icon {
+        .backButtonIcon {
           display: block;
           width: 36px;
           height: 36px;
@@ -82,13 +82,13 @@
     }    
   }
 
-  .actions-bar {
+  .actionsBar {
     height: 30px;
     margin-top: 6px;
     margin-left: auto;
     transition: margin .2s cubic-bezier(0.4, 0.0, 0.2, 1);
   
-    &.with-breadcrumbs {
+    &.withBreadcrumbs {
       margin-top: 36px;
     }
   
@@ -101,16 +101,16 @@
 
 
 @include withRTL() {
-  .breadcrumbs-container {
+  .breadcrumbsContainer {
     margin-left: 0;
     margin-right: -10px;
   }
 
-  .back-button {
+  .backButton {
     left: 12px;
   }
 
-  .back-button-icon {
+  .backButtonIcon {
     transform: scaleX(-1);
   }
 }
