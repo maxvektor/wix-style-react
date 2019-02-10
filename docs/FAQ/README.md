@@ -44,30 +44,6 @@ afterEach(() => {
 
 Check out the documentation of the component you're using for more info.
 
-##### `ReferenceError: regeneratorRuntime is not defined`
-
-If your project uses babel, we recommend you to include `babel-polyfill` in your test setup file.
-Otherwise, please install `regenerator-runtime` to your `devDependencies` and include it in your
-test setup file.
-
-In `jest-setup`, you might do:
-
-```js
-import `regenerator-runtime/runtime`;
-```
-
-In `karma.conf.js`, you might do:
-
-```js
-module.exports = {
-  // ...
-
-  files: [
-    require.resolve('regenerator-runtime/runtime'),
-  ],
-};
-```
-
 #### How can I get colors and fonts to use in my project?
 
 We recommend using the [Typography

@@ -110,7 +110,11 @@ class StatsWidget extends WixComponent {
   }
 
   _renderSuffix(suffixElement, index) {
-    return <div className={styles.filtersWrapper} key={index}>{suffixElement}</div>;
+    return (
+      <div className={styles.filtersWrapper} key={index}>
+        {suffixElement}
+      </div>
+    );
   }
 
   render() {
@@ -122,7 +126,9 @@ class StatsWidget extends WixComponent {
         <Card.Header
           dataHook="stats-widget-title"
           title={title}
-          suffix={suffixElements.map((suffixElement, index) => this._renderSuffix(suffixElement, index))}
+          suffix={suffixElements.map((suffixElement, index) =>
+            this._renderSuffix(suffixElement, index),
+          )}
         />
         <Card.Content>
           {statistics ? (

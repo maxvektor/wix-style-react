@@ -18,7 +18,10 @@ ${SingleAreaListWithAnimationScssRaw}
 export default () => (
   <div>
     <Markdown source={SingleAreaListWithAnimationReadme} />
-    <CodeExample title="SortableList" code={SingleAreaListWithAnimationRawCombined}>
+    <CodeExample
+      title="SortableList"
+      code={SingleAreaListWithAnimationRawCombined}
+    >
       <SingleAreaListWithAnimation />
     </CodeExample>
   </div>

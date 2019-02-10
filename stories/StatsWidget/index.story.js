@@ -50,7 +50,7 @@ export default {
               <CodeExample
                 title="Stats widget with TextButton suffix"
                 code={ExampleStatsWidgetWithSuffixRaw}
-                >
+              >
                 <ExampleStatsWidgetWithSuffix />
               </CodeExample>
               <CodeExample

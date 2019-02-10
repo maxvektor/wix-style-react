@@ -77,7 +77,7 @@ const collect = connect => ({
 
 @DropTarget(ItemTypes.DRAGGABLE, target, collect)
 class DraggableTarget extends WixComponent {
-  registerNode = (node) => {
+  registerNode = node => {
     this.props.setWrapperNode(node, this.props.index, this.props.item);
   };
 
@@ -85,7 +85,9 @@ class DraggableTarget extends WixComponent {
     if (!this.props.connectDropTarget) {
       return null;
     }
-    return this.props.connectDropTarget(<div ref={this.registerNode}>{this.props.children}</div>);
+    return this.props.connectDropTarget(
+      <div ref={this.registerNode}>{this.props.children}</div>,
+    );
   }
 }
 

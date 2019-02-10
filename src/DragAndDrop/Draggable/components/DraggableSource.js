@@ -78,16 +78,16 @@ const source = {
       }
     }
   },
-  canDrag: (
-    { id, index, containerId, groupName, item, canDrag },
-  ) => {
-    return canDrag ? canDrag({
-      id,
-      index,
-      containerId,
-      groupName,
-      item,
-    }) : true;
+  canDrag: ({ id, index, containerId, groupName, item, canDrag }) => {
+    return canDrag
+      ? canDrag({
+          id,
+          index,
+          containerId,
+          groupName,
+          item,
+        })
+      : true;
   },
   isDragging: ({ id, containerId, groupName }, monitor) => {
     const item = monitor.getItem();
@@ -108,7 +108,10 @@ const collect = (connect, monitor) => ({
 export default class DraggableSource extends React.Component {
   state = {
     offsetOfHandle: { x: 0, y: 0 },
+    itemWidth: null
   };
+
+  rootNode = null;
 
   componentDidMount() {
     if (this.props.connectDragPreview) {
@@ -145,9 +148,14 @@ export default class DraggableSource extends React.Component {
   }
 
   _getWrapperStyles() {
-    const {shift, ignoreMouseEvents, animationDuration, animationTiming} = this.props;
+    const {
+      shift,
+      ignoreMouseEvents,
+      animationDuration,
+      animationTiming,
+    } = this.props;
     const [xShift, yShift] = shift || [0, 0];
-    const hasShift = (xShift || yShift);
+    const hasShift = xShift || yShift;
 
     const transition = ignoreMouseEvents
       ? `transform ${animationDuration}ms ${animationTiming}`
@@ -155,12 +163,8 @@ export default class DraggableSource extends React.Component {
     const transform = hasShift
       ? `translate(${xShift}px, ${yShift}px)`
       : undefined;
-    const willChange = hasShift
-      ? 'transform'
-      : undefined;
-    const pointerEvents = ignoreMouseEvents || hasShift
-      ? 'none'
-      : undefined;
+    const willChange = hasShift ? 'transform' : undefined;
+    const pointerEvents = ignoreMouseEvents || hasShift ? 'none' : undefined;
 
     return {
       willChange,
@@ -178,44 +182,52 @@ export default class DraggableSource extends React.Component {
       renderItem,
       id,
       item,
+      delayed,
     } = this.props;
 
-    const content = withHandle ? (
-      renderItem({
-        id,
-        item,
-        isPlaceholder: isDragging,
-        connectHandle: handle => {
-          const handleWithRef = React.cloneElement(handle, {
-            ref: node => (this.handleNode = ReactDOM.findDOMNode(node)),
-          });
-          return connectDragSource(handleWithRef);
-        },
-      })
-    ) : (
-      connectDragSource(renderItem({
-        id,
-        item,
-        isPlaceholder: isDragging,
-        connectHandle: noop,
-      }))
-    );
+    const content = withHandle
+      ? renderItem({
+          id,
+          item,
+          isPlaceholder: isDragging,
+          connectHandle: handle => {
+            const handleWithRef = React.cloneElement(handle, {
+              ref: node => (this.handleNode = ReactDOM.findDOMNode(node)),
+            });
+            return connectDragSource(handleWithRef);
+          },
+        delayed,
+        })
+      : connectDragSource(
+          renderItem({
+            id,
+            item,
+            isPlaceholder: isDragging,
+            connectHandle: noop,
+            delayed,
+          }),
+        );
 
-    return (
-      <div style={this._getWrapperStyles()}>
-        {content}
-      </div>
-    );
+    return <div style={this._getWrapperStyles()}>{content}</div>;
+  }
+
+  _setRootNode = node => {
+    // Don't need to reset the values if node remains the same
+    if (node && this.rootNode !== node) {
+      this.rootNode = node;
+      this.setState({itemWidth: this.rootNode.getBoundingClientRect().width});
+    }
   }
 
   _renderPreview = ({ previewStyles }) => {
-    const { renderItem, id, item } = this.props;
+    const { renderItem, id, item, delayed } = this.props;
     return renderItem({
       id,
       item,
-      previewStyles,
+      previewStyles: {width: this.state.itemWidth, ...previewStyles},
       isPreview: true,
       connectHandle: noop,
+      delayed,
     });
   };
 
@@ -227,6 +239,8 @@ export default class DraggableSource extends React.Component {
         usePortal={usePortal}
         renderPreview={this._renderPreview}
         id={id}
+        // pass 'width' this prop to rerender element with changed width from state
+        width={this.state.itemWidth}
         draggedType={ItemTypes.DRAGGABLE}
       />
     );
@@ -235,7 +249,7 @@ export default class DraggableSource extends React.Component {
   render() {
     const { connectDragSource } = this.props;
     return connectDragSource ? (
-      <div ref={node => (this.rootNode = node)}>
+      <div ref={this._setRootNode}>
         {this._renderDraggableItem()}
         {this._renderPreviewItem()}
       </div>
@@ -270,4 +284,6 @@ DraggableSource.propTypes = {
   animationTiming: PropTypes.string,
   /** callback that could prevent item from dragging */
   canDrag: PropTypes.func,
+  /** Is delay timer still waiting before user can drag the item */
+  delayed: PropTypes.bool,
 };

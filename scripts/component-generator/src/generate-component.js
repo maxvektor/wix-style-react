@@ -1,11 +1,7 @@
 const chalk = require('chalk');
 
 const logger = require('./logger');
-const verifyWorkingDirectory = require('./tasks/verify-working-directory');
 const runPrompts = require('./tasks/run-prompts');
-const copyTemplates = require('./tasks/copy-templates');
-const runCodemods = require('./tasks/run-codemods');
-const runLintFix = require('./tasks/run-lint-fix');
 
 module.exports = async (cwd, options) => {
   const answers = options.answers || (await runPrompts());
@@ -16,20 +12,29 @@ module.exports = async (cwd, options) => {
 
   return [
     {
-      task: () => verifyWorkingDirectory(cwd),
+      // requires are here for a reason, they're to delay code execution until needed. That's because one task
+      // might change files that another task relies on. If all files are required beforehand, consecutive tasks will
+      // not see file changes and thus, component generation becomes falsy
+      task: () => require('./tasks/verify-working-directory')(cwd),
       skipped: options.force,
       message: 'Verifying clean working directory',
     },
-    { task: copyTemplates, message: 'Copy files' },
     {
-      task: runCodemods,
+      task: () => require('./tasks/copy-templates')(answers),
+      message: 'Copy files',
+    },
+    {
+      task: () => require('./tasks/run-codemods')(answers),
       message: 'Run codemods',
       skipped: options.skipCodemods,
     },
-    { task: runLintFix, message: 'Run lint fix' },
     {
       task: () => require('../../generate-testkit-exports')(),
       message: 'Generate testkit exports',
+    },
+    {
+      task: () => require('./tasks/run-lint-fix')(answers),
+      message: 'Run lint fix',
     },
   ]
 
@@ -40,7 +45,7 @@ module.exports = async (cwd, options) => {
         promise.then(() => {
           const spinner = logger.spinner(message);
 
-          return task(answers).then(() => {
+          return task().then(() => {
             spinner.stop();
             logger.success(`Done: ${message}`);
           });

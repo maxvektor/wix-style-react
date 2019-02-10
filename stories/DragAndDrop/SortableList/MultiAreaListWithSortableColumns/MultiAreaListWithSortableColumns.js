@@ -32,7 +32,7 @@ export default class MultiAreaListWithSortableColumns extends React.Component {
       {
         id: 'multiArea2',
         items: generateStateForContainer(4, 5),
-        width: 300
+        width: 300,
       },
     ],
   };
@@ -100,10 +100,14 @@ export default class MultiAreaListWithSortableColumns extends React.Component {
       classNames(defaultDndStyles.item, styles.columnItem),
     );
 
-    const {width, items} = item;
+    const { width, items } = item;
 
     return (
-      <div className={classes} style={{...previewStyles, width}} data-hook={`column-${id}`}>
+      <div
+        className={classes}
+        style={{ ...previewStyles, width }}
+        data-hook={`column-${id}`}
+      >
         <SortableList
           dragPreview={isPreview}
           className={classNames(defaultDndStyles.list, styles.column)}

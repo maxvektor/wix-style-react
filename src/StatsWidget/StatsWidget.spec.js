@@ -116,8 +116,14 @@ describe('StatsWidget', () => {
   });
 
   it('should be able to transfer a suffix inside', () => {
-    createComponent({ title, statistics: statisticsWithPercents, suffix: <div data-hook='suffix-element-hook'>some test</div> });
-    expect(driver.getSuffixElementByHook('suffix-element-hook')).toBe('some test');
+    createComponent({
+      title,
+      statistics: statisticsWithPercents,
+      suffix: <div data-hook="suffix-element-hook">some test</div>,
+    });
+    expect(driver.getSuffixElementByHook('suffix-element-hook')).toBe(
+      'some test',
+    );
   });
 
   it('filters should have selectable options', () => {

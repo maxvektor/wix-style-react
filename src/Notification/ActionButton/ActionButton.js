@@ -14,7 +14,7 @@ const ActionButton = ({ children, onClick, type, link }) => {
       <TextButton
         underline="always"
         skin="light"
-        as="a" 
+        as="a"
         href={link}
         {...commonProps}
       >

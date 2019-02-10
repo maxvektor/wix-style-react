@@ -46,6 +46,8 @@
   | dragPreview      | bool     | false        | -          | in case if you have nested SortableLists, you need to set dragPreview to true when you drag nested SortableList |
   | animationDuration| number   | 0            | -          | animation duration. Please note, `SortableList` uses CSS `transition`s to animate itself
   | animationTiming  | string   | ''           | -          | animation timing function
+  | delay            | number   |  -           | -          | number of ms that user should press on item before drag will start
+  | canDrag          | func     |  -           | -          | function which will be used before drag start and can prevent it like if returns false: () => false |
 </details>
 
 Some details about complex props
@@ -89,16 +91,18 @@ Some details about complex props
   so you able to style your item by cheking isPreview.
   - `id` - an id from item that you render
   - `previewStyles` - styles that coming from SortableList, `you always need to apply` them on your root div, inside of renderItem
+  You can add item width as `style={{...previewStyles, width: your_width }}`. By default previewStyles contain original items `width` in pixels
   - `item` - item that you are render
 
   Example without handle:
   ```js
-  renderItem = ({isPlaceholder, isPreview, id, previewStyles, item}) => {
+  renderItem = ({isPlaceholder, isPreview, id, previewStyles, item, delayed}) => {
       const classes = classNames(
         styles.card,
         {
           [styles.placeholder]: isPlaceholder,
-          [styles.preview]: isPreview
+          [styles.preview]: isPreview,
+          [styles.delayed]: delayed
         });
 
       return (
