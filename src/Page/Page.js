@@ -417,13 +417,23 @@ class Page extends WixComponent {
     const { PageContent } = childrenObject;
 
     const { headerContainerHeight } = this._calculateHeaderMeasurements();
-    // console.log('minimizedDiff= ', minimizedDiff);
 
-    const { pageHeight } = this.state;
+    const { pageHeight, minimizedHeaderContainerHeight } = this.state;
 
     const contentHorizontalLayoutProps = this._getContentHorizontalLayoutProps();
     const stretchToHeight =
       pageHeight - headerContainerHeight - PAGE_BOTTOM_PADDING_PX;
+
+    let pageContent = PageContent;
+    if (typeof PageContent.props.children === 'function') {
+      pageContent = React.cloneElement(PageContent, {
+        stickyStyle: {
+          position: 'sticky',
+          top: `${minimizedHeaderContainerHeight}px`,
+          zIndex: 1,
+        },
+      });
+    }
 
     return (
       <div
@@ -442,7 +452,7 @@ class Page extends WixComponent {
           className={s.contentFloating}
         >
           {this._renderFixedContent()}
-          {this._safeGetChildren(PageContent)}
+          {pageContent}
         </div>
       </div>
     );

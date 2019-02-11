@@ -6,6 +6,7 @@ import ExampleStandAlone from './ExampleStandAlone';
 import ExampleWithAppStructure from './ExampleWithAppStructure';
 import ExampleStretchContent from './ExampleStretchContent';
 import ExampleStretchTable from './ExampleStretchTable';
+import ExampleStickyTableWithGap from './ExampleStickyTableWithGap';
 
 const PageExampleStories = storiesOf(
   `${Category.LAYOUT}/2.5 Page Examples`,
@@ -17,4 +18,7 @@ PageExampleStories.add('2. Standard', () => <ExampleWithAppStructure />);
 PageExampleStories.add('3. Stretched Content', () => <ExampleStretchContent />);
 PageExampleStories.add('4. Stretched Table In Page', () => (
   <ExampleStretchTable />
+));
+PageExampleStories.add('5. Sticky Table With Gap', () => (
+  <ExampleStickyTableWithGap />
 ));
