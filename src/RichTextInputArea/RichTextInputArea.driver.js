@@ -3,7 +3,7 @@ import ReactTestUtils from 'react-dom/test-utils';
 
 export const getTextArea = base => base.$('.public-DraftEditor-content');
 
-export const richTextInputAreaDriverFactory = base => {
+export default base => {
   return {
     ...baseUniDriverFactory(base),
     getContent: () => base.text(),
