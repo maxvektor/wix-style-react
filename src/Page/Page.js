@@ -21,7 +21,6 @@ import {
   mainContainerMaxWidthPx as GRID_MAX_WIDTH,
 } from '../Grid/constants';
 import deprecationLog from '../utils/deprecationLog';
-import { StickyContainer, Sticky } from './Sticky';
 
 /*
  * Page structure is as follows:
@@ -157,32 +156,19 @@ class Page extends WixComponent {
       : SCROLL_TOP_THRESHOLD;
   }
 
-  _setScrollContainer(scrollableContainerInstance) {
-    this.scrollableContentRef = ReactDOM.findDOMNode(
-      scrollableContainerInstance,
-    );
-    if (!this.stickyContainerInstance) {
-      // this.stickyContainerInstance is not really used, we just use it as a flag so we subscribe only once
-      this.stickyContainerInstance = scrollableContainerInstance;
-      this.stickyContainerInstance.subscribe(obj =>
-        this._handleStickyContainerEvent(obj),
-      );
-    }
-    this.props.scrollableContentRef &&
-      this.props.scrollableContentRef(scrollableContainerInstance);
-  }
+  _setScrollContainer(scrollableContainerRef) {
+    this.scrollableContentRef = scrollableContainerRef;
 
-  _handleStickyContainerEvent(obj) {
-    // TODO: This handle all sort of events, need to react to `onScroll` only
-    this._handleScroll(obj.eventSource);
+    this.props.scrollableContentRef &&
+      this.props.scrollableContentRef(scrollableContainerRef);
   }
 
   _getScrollContainer() {
     return this.scrollableContentRef;
   }
 
-  _handleScroll(scrollContainer) {
-    const containerScrollTop = scrollContainer.scrollTop;
+  _handleScroll() {
+    const containerScrollTop = this._getScrollContainer().scrollTop;
 
     const { displayMiniHeader, minimizedHeaderContainerHeight } = this.state;
     const nextDisplayMiniHeader =
@@ -363,19 +349,20 @@ class Page extends WixComponent {
       headerContainerHeight,
     } = this.state;
     return (
-      <StickyContainer
+      <div
         className={s.scrollableContainer}
         data-hook="page-scrollable-content"
         data-class="page-scrollable-content"
         ref={r => this._setScrollContainer(r)}
+        onScroll={this._handleScroll}
       >
         {this._renderScrollableBackground({
           gradientHeight,
           imageHeight,
         })}
         {this._renderHeader({ minimized: false })}
-        {this._renderContent()}
-      </StickyContainer>
+        {this._renderContentWrapper()}
+      </div>
     );
   }
 
@@ -406,20 +393,17 @@ class Page extends WixComponent {
     }
   }
 
-  _renderFixedContent({ style } = {}) {
+  _renderFixedContent() {
     const { children } = this.props;
     const childrenObject = getChildrenObject(children);
     const { PageFixedContent } = childrenObject;
-
+    const { minimizedHeaderContainerHeight } = this.state;
     return (
       PageFixedContent && (
         <div
           data-hook="page-fixed-content"
-          className={classNames(
-            s.fixedContent,
-            // , s.contentFloating
-          )}
-          style={style}
+          className={classNames(s.fixedContent)}
+          style={{ top: `${minimizedHeaderContainerHeight}px` }}
         >
           {React.cloneElement(PageFixedContent)}
         </div>
@@ -427,41 +411,7 @@ class Page extends WixComponent {
     );
   }
 
-  _renderStickyContent() {
-    const { children } = this.props;
-    const childrenObject = getChildrenObject(children);
-    const { PageFixedContent } = childrenObject;
-
-    if (!PageFixedContent) {
-      return null;
-    }
-
-    const {
-      minimizedHeaderContainerHeight,
-      headerContainerHeight,
-    } = this.state;
-
-    return (
-      <Sticky
-        relative
-        // topOffset={
-        //   minimizedHeaderContainerHeight === null
-        //     ? 0
-        //     : -(headerContainerHeight - minimizedHeaderContainerHeight)
-        // }
-      >
-        {({ style }) => {
-          return this._renderFixedContent({
-            style: {
-              ...style,
-              // top: isSticky ? `${minimizedHeaderContainerHeight}px` : undefined,
-            },
-          });
-        }}
-      </Sticky>
-    );
-  }
-  _renderContent() {
+  _renderContentWrapper() {
     const { children } = this.props;
     const childrenObject = getChildrenObject(children);
     const { PageContent } = childrenObject;
@@ -491,7 +441,6 @@ class Page extends WixComponent {
           }}
           className={s.contentFloating}
         >
-          {/* {this._renderStickyContent()} */}
           {this._renderFixedContent()}
           {this._safeGetChildren(PageContent)}
         </div>

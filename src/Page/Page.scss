@@ -135,6 +135,7 @@ $pageBottomPadding: 48px; //  Should be synced with JS Page value
 
 .fixedContent {
   box-sizing: content-box; 
+  position: sticky;
 }
 
 .contentPlaceholder {

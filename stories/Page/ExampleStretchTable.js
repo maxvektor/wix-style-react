@@ -71,7 +71,7 @@ class ExampleStretchTable extends React.Component {
   state = {
     data: allData,
     collectionId: 0,
-    filterId: 1,
+    filterId: 0,
     searchTerm: '',
     inStock: false,
   };
