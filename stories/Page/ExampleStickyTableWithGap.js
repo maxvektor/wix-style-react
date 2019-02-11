@@ -216,9 +216,97 @@ class ExampleStretchTable extends React.Component {
     );
   }
 
-  render() {
+  renderTable(stickyStyle) {
     const tableData = this.getFilteredData();
-
+    return (
+      <Table
+        withWrapper
+        dataHook="story-table-example"
+        data={tableData}
+        itemsPerPage={20}
+        columns={[
+          {
+            title: 'Name',
+            render: row => (
+              <Highlighter match={this.state.searchTerm}>
+                {row.name}
+              </Highlighter>
+            ),
+            width: '30%',
+            minWidth: '150px',
+          },
+          {
+            title: 'SKU',
+            render: row => row.SKU,
+            width: '20%',
+            minWidth: '100px',
+          },
+          {
+            title: 'Price',
+            render: row => row.price,
+            width: '20%',
+            minWidth: '100px',
+          },
+          {
+            title: 'Inventory',
+            render: row => row.inventory,
+            width: '20%',
+            minWidth: '100px',
+          },
+        ]}
+        onSelectionChange={selectedIds =>
+          console.log('Table.onSelectionChange(): selectedIds=', selectedIds)
+        }
+        showSelection
+        showLastRowDivider
+      >
+        <div style={stickyStyle}>
+          <Card>
+            <Table.ToolbarContainer>
+              {selectionContext =>
+                selectionContext.selectedCount === 0
+                  ? this.renderMainToolbar()
+                  : this.renderBulkActionsToolbar(selectionContext)
+              }
+            </Table.ToolbarContainer>
+            {tableData.length ? (
+              <Table.Titlebar />
+            ) : (
+              <Table.EmptyState
+                image={<ImagePlaceholder />}
+                subtitle={
+                  this.state.searchTerm ? (
+                    <Text>
+                      There are no search results for{' '}
+                      <Text weight="normal">{`"${
+                        this.state.searchTerm
+                      }"`}</Text>
+                      <br />
+                      Try search by other cryteria
+                    </Text>
+                  ) : (
+                    <Text>
+                      There are no results matching your filters
+                      <br />
+                      Try search by other cryteria
+                    </Text>
+                  )
+                }
+              >
+                <TextButton onClick={() => this.clearSearch()}>
+                  Clear the search
+                </TextButton>
+              </Table.EmptyState>
+            )}
+          </Card>
+        </div>
+        <Card stretchVertically>
+          <Table.Content titleBarVisible={false} />
+        </Card>
+      </Table>
+    );
+  }
+  render() {
     return (
       <ExamplePageContainer>
         <Page
@@ -232,99 +320,17 @@ class ExampleStretchTable extends React.Component {
               <Container>
                 <Row>
                   <Card>
-                    <Card.Content>Hello</Card.Content>
+                    <Card.Content>Some Content 1</Card.Content>
                   </Card>
                 </Row>
+                <Row>{this.renderTable(stickyStyle)}</Row>
+
                 <Row>
-                  <Table
-                    withWrapper
-                    dataHook="story-table-example"
-                    data={tableData}
-                    itemsPerPage={20}
-                    columns={[
-                      {
-                        title: 'Name',
-                        render: row => (
-                          <Highlighter match={this.state.searchTerm}>
-                            {row.name}
-                          </Highlighter>
-                        ),
-                        width: '30%',
-                        minWidth: '150px',
-                      },
-                      {
-                        title: 'SKU',
-                        render: row => row.SKU,
-                        width: '20%',
-                        minWidth: '100px',
-                      },
-                      {
-                        title: 'Price',
-                        render: row => row.price,
-                        width: '20%',
-                        minWidth: '100px',
-                      },
-                      {
-                        title: 'Inventory',
-                        render: row => row.inventory,
-                        width: '20%',
-                        minWidth: '100px',
-                      },
-                    ]}
-                    onSelectionChange={selectedIds =>
-                      console.log(
-                        'Table.onSelectionChange(): selectedIds=',
-                        selectedIds,
-                      )
-                    }
-                    showSelection
-                    showLastRowDivider
-                  >
-                    <div style={stickyStyle}>
-                      <Card>
-                        <Table.ToolbarContainer>
-                          {selectionContext =>
-                            selectionContext.selectedCount === 0
-                              ? this.renderMainToolbar()
-                              : this.renderBulkActionsToolbar(selectionContext)
-                          }
-                        </Table.ToolbarContainer>
-                        {tableData.length ? (
-                          <Table.Titlebar />
-                        ) : (
-                          <Table.EmptyState
-                            image={<ImagePlaceholder />}
-                            subtitle={
-                              this.state.searchTerm ? (
-                                <Text>
-                                  There are no search results for{' '}
-                                  <Text weight="normal">{`"${
-                                    this.state.searchTerm
-                                  }"`}</Text>
-                                  <br />
-                                  Try search by other cryteria
-                                </Text>
-                              ) : (
-                                <Text>
-                                  There are no results matching your filters
-                                  <br />
-                                  Try search by other cryteria
-                                </Text>
-                              )
-                            }
-                          >
-                            <TextButton onClick={() => this.clearSearch()}>
-                              Clear the search
-                            </TextButton>
-                          </Table.EmptyState>
-                        )}
-                      </Card>
-                    </div>
-                    <Card stretchVertically>
-                      <Table.Content titleBarVisible={false} />
-                    </Card>
-                  </Table>
+                  <Card>
+                    <Card.Content>Some Content 2</Card.Content>
+                  </Card>
                 </Row>
+                <Row>{this.renderTable(stickyStyle)}</Row>
               </Container>
             )}
           </Page.Content>
