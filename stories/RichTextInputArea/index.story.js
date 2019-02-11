@@ -3,7 +3,7 @@ import { storySettings } from './storySettings';
 import LiveCodeExample from '../utils/Components/LiveCodeExample';
 
 import RichTextInputArea from '../../src/RichTextInputArea';
-import ExampleRichTextInputArea from './examples/ExampleRichTextInputArea';
+import ExampleRichTextInputArea from '!raw-loader!./examples/ExampleRichTextInputArea';
 
 export default {
   category: storySettings.kind,
